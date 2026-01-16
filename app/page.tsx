@@ -2,6 +2,9 @@
 
 import { useState, useEffect } from "react"
 import { AnimatePresence } from "framer-motion"
+import { HeroHome } from "@/components/landing/hero-home"
+import { SystemAudit } from "@/components/audit/system-audit"
+import { NextSteps } from "@/components/audit/next-steps"
 import { WelcomeScreen } from "@/components/onboarding/welcome-screen"
 import { IdentityScreen } from "@/components/onboarding/identity-screen"
 import { SituationScreen } from "@/components/onboarding/situation-screen"
@@ -9,37 +12,65 @@ import { AttachmentScreen } from "@/components/onboarding/attachment-screen"
 import { LivingSituationScreen } from "@/components/onboarding/living-situation-screen"
 import { TimelineScreen } from "@/components/onboarding/timeline-screen"
 import { OnboardingCompleteScreen } from "@/components/onboarding/onboarding-complete-screen"
-import { HomeView } from "@/components/dashboard/home-view"
+import { MainDashboard } from "@/components/dashboard/main-dashboard"
 import { ProcessingHub } from "@/components/modules/processing-hub"
 import { GuidedReflection } from "@/components/modules/guided-reflection"
 import { DailyCheckIn } from "@/components/modules/daily-check-in"
 import { NeedsExplorer } from "@/components/modules/needs-explorer"
 import { BoundaryBuilder } from "@/components/modules/boundary-builder"
-import { TruthVault } from "@/components/modules/truth-vault"
-import { PatternExplorer } from "@/components/modules/pattern-explorer"
+import { SafetyVault } from "@/components/modules/safety-vault"
+import { PatternLibrary } from "@/components/modules/pattern-library"
 import { NavBar } from "@/components/dashboard/nav-bar"
 import { PanicButton } from "@/components/dashboard/panic-button"
 import { getUserProfile, saveUserProfile } from "@/lib/storage"
 
+type AppState = "hero" | "audit" | "next-steps" | "onboarding" | "dashboard"
 type OnboardingStep = "welcome" | "identity" | "situation" | "attachment" | "living" | "timeline" | "complete"
 type AppTab = "home" | "process" | "explore" | "tools"
 type SubView = null | "reflection" | "checkin" | "vault" | "patterns" | "needs" | "boundaries"
 
 export default function ThePivot() {
   const [isLoading, setIsLoading] = useState(true)
+  const [appState, setAppState] = useState<AppState>("hero")
   const [onboardingStep, setOnboardingStep] = useState<OnboardingStep>("welcome")
-  const [isOnboarded, setIsOnboarded] = useState(false)
   const [activeTab, setActiveTab] = useState<AppTab>("home")
   const [subView, setSubView] = useState<SubView>(null)
 
   useEffect(() => {
     const profile = getUserProfile()
+
+    // Determine initial state based on profile
     if (profile.onboardingComplete) {
-      setIsOnboarded(true)
+      setAppState("dashboard")
+    } else if (profile.auditProfile) {
+      setAppState("next-steps")
+    } else if (profile.statusPath) {
+      setAppState("audit")
     }
+
     setIsLoading(false)
   }, [])
 
+  // Handlers for Hero Home
+  const handleStatusSelect = () => {
+    // Status is saved in the component
+  }
+
+  const handleStartJourney = () => {
+    setAppState("audit")
+  }
+
+  // Handlers for System Audit
+  const handleAuditComplete = () => {
+    setAppState("next-steps")
+  }
+
+  // Handlers for Next Steps
+  const handleNextStepsComplete = () => {
+    setAppState("onboarding")
+  }
+
+  // Onboarding handlers
   const handleIdentityComplete = (data: { age: string; identity: string; pronouns: string }) => {
     saveUserProfile({ age: data.age, identity: data.identity, pronouns: data.pronouns })
     setOnboardingStep("situation")
@@ -73,7 +104,7 @@ export default function ThePivot() {
       onboardingComplete: true,
       clarityStartDate: new Date().toISOString(),
     })
-    setIsOnboarded(true)
+    setAppState("dashboard")
   }
 
   const handleOpenSubView = (view: SubView) => {
@@ -87,13 +118,40 @@ export default function ThePivot() {
   if (isLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-background">
-        <div className="w-8 h-8 border-2 border-primary border-t-transparent rounded-full animate-spin" />
+        <div className="w-8 h-8 border-2 border-pivot-clarity-cyan border-t-transparent rounded-full animate-spin" />
       </div>
     )
   }
 
+  // Hero Home
+  if (appState === "hero") {
+    return (
+      <main className="min-h-screen bg-background">
+        <HeroHome onStatusSelect={handleStatusSelect} onStartJourney={handleStartJourney} />
+      </main>
+    )
+  }
+
+  // System Audit
+  if (appState === "audit") {
+    return (
+      <main className="min-h-screen bg-background">
+        <SystemAudit onComplete={handleAuditComplete} />
+      </main>
+    )
+  }
+
+  // Next Steps
+  if (appState === "next-steps") {
+    return (
+      <main className="min-h-screen bg-background">
+        <NextSteps onContinue={handleNextStepsComplete} />
+      </main>
+    )
+  }
+
   // Onboarding Flow
-  if (!isOnboarded) {
+  if (appState === "onboarding") {
     return (
       <main className="min-h-screen bg-background">
         <AnimatePresence mode="wait">
@@ -118,8 +176,8 @@ export default function ThePivot() {
         <AnimatePresence mode="wait">
           {subView === "reflection" && <GuidedReflection key="reflection" onBack={handleCloseSubView} />}
           {subView === "checkin" && <DailyCheckIn key="checkin" onBack={handleCloseSubView} />}
-          {subView === "vault" && <TruthVault key="vault" onBack={handleCloseSubView} />}
-          {subView === "patterns" && <PatternExplorer key="patterns" onBack={handleCloseSubView} />}
+          {subView === "vault" && <SafetyVault key="vault" onBack={handleCloseSubView} />}
+          {subView === "patterns" && <PatternLibrary key="patterns" onBack={handleCloseSubView} />}
           {subView === "needs" && <NeedsExplorer key="needs" onBack={handleCloseSubView} />}
           {subView === "boundaries" && <BoundaryBuilder key="boundaries" onBack={handleCloseSubView} />}
         </AnimatePresence>
@@ -127,13 +185,13 @@ export default function ThePivot() {
     )
   }
 
-  // Main App Dashboard
+  // Main Dashboard
   return (
     <main className="min-h-screen bg-background">
       <AnimatePresence mode="wait">
-        {activeTab === "home" && <HomeView key="home" onOpenSubView={handleOpenSubView} />}
+        {activeTab === "home" && <MainDashboard key="home" onOpenSubView={handleOpenSubView} />}
         {activeTab === "process" && <ProcessingHub key="process" onOpenSubView={handleOpenSubView} />}
-        {activeTab === "explore" && <PatternExplorer key="explore" onBack={() => setActiveTab("home")} embedded />}
+        {activeTab === "explore" && <PatternLibrary key="explore" onBack={() => setActiveTab("home")} embedded />}
         {activeTab === "tools" && <NeedsExplorer key="tools" onBack={() => setActiveTab("home")} embedded />}
       </AnimatePresence>
 

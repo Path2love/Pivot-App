@@ -1,19 +1,25 @@
 export interface UserProfile {
-  // Basic info (optional, non-judgmental)
+  // Basic info
   age?: string
   identity?: string
   pronouns?: string
 
+  statusPath?: "limbo" | "shutdown" | "post-breakup"
+
   // Situation discovery
-  situationType?: string // what brought them here
-  myAttachmentStyle?: string // their self-identified style
-  partnerAttachmentStyle?: string // what they observe in partner
-  relationshipStatus?: string // current state
-  livingSituation?: string // living arrangement
-  sharedCommunity?: boolean // shared social circles
+  situationType?: string
+  myAttachmentStyle?: string
+  partnerAttachmentStyle?: string
+  relationshipStatus?: string
+  livingSituation?: string
+  sharedCommunity?: boolean
+
+  auditAnswers?: Record<string, "a" | "b">
+  auditProfile?: "integrated" | "compartmentalized" | "shutdown"
+  auditCompletedAt?: string
 
   // Timeline preferences
-  clarityDuration?: number // 14 or 30 days
+  clarityDuration?: number
   clarityStartDate?: string
   onboardingComplete?: boolean
 
@@ -24,19 +30,20 @@ export interface UserProfile {
 
 export interface JournalEntry {
   id: string
-  type: "reflection" | "unsent" | "gratitude" | "insight"
+  type: "reflection" | "unsent" | "gratitude" | "insight" | "anchor"
   prompt?: string
   text: string
   timestamp: string
   followUpQuestions?: string[]
+  dayNumber?: number
 }
 
 export interface CheckInEntry {
   id: string
   date: string
-  mood: number // 1-10
-  urgeToContact: number // 1-10
-  anxietyLevel: number // 1-10
+  mood: number
+  urgeToContact: number
+  anxietyLevel: number
   selfCareActions: string[]
   insights?: string
 }
@@ -57,12 +64,20 @@ export interface BoundaryItem {
   createdAt: string
 }
 
+export interface VaultEntry {
+  id: string
+  text: string
+  timestamp: string
+  reflectionQuestions: string[]
+}
+
 const STORAGE_KEYS = {
   PROFILE: "pivot_user_profile",
   JOURNAL: "pivot_journal_entries",
   CHECKINS: "pivot_checkin_entries",
   NEEDS: "pivot_needs",
   BOUNDARIES: "pivot_boundaries",
+  VAULT: "pivot_vault_entries",
 }
 
 export function getUserProfile(): UserProfile {
@@ -135,20 +150,44 @@ export function saveBoundary(boundary: BoundaryItem): void {
   localStorage.setItem(STORAGE_KEYS.BOUNDARIES, JSON.stringify(boundaries))
 }
 
+export function getVaultEntries(): VaultEntry[] {
+  if (typeof window === "undefined") return []
+  const stored = localStorage.getItem(STORAGE_KEYS.VAULT)
+  return stored ? JSON.parse(stored) : []
+}
+
+export function saveVaultEntry(entry: VaultEntry): void {
+  if (typeof window === "undefined") return
+  const entries = getVaultEntries()
+  entries.unshift(entry)
+  localStorage.setItem(STORAGE_KEYS.VAULT, JSON.stringify(entries))
+}
+
 export function getClarityDaysRemaining(): number {
   const profile = getUserProfile()
-  if (!profile.clarityStartDate) return profile.clarityDuration || 30
+  if (!profile.clarityStartDate) return profile.clarityDuration || 14
 
-  const duration = profile.clarityDuration || 30
+  const duration = profile.clarityDuration || 14
   const start = new Date(profile.clarityStartDate)
   const now = new Date()
   const diffDays = Math.floor((now.getTime() - start.getTime()) / (1000 * 60 * 60 * 24))
   return Math.max(0, duration - diffDays)
 }
 
+export function getCurrentDay(): number {
+  const profile = getUserProfile()
+  if (!profile.clarityStartDate) return 1
+
+  const duration = profile.clarityDuration || 14
+  const start = new Date(profile.clarityStartDate)
+  const now = new Date()
+  const diffDays = Math.floor((now.getTime() - start.getTime()) / (1000 * 60 * 60 * 24))
+  return Math.min(duration, Math.max(1, diffDays + 1))
+}
+
 export function getClarityProgress(): number {
   const profile = getUserProfile()
-  const duration = profile.clarityDuration || 30
+  const duration = profile.clarityDuration || 14
   const remaining = getClarityDaysRemaining()
   return ((duration - remaining) / duration) * 100
 }

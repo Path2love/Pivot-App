@@ -5,7 +5,8 @@ import { motion, AnimatePresence } from "framer-motion"
 import { ArrowLeft, PenLine, ChevronRight, Sparkles, RefreshCw } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Textarea } from "@/components/ui/textarea"
-import { saveJournalEntry, getUserProfile } from "@/lib/storage"
+import { PivotCard } from "@/components/ui/pivot-card"
+import { saveJournalEntry } from "@/lib/storage"
 
 interface GuidedReflectionProps {
   onBack: () => void
@@ -16,6 +17,7 @@ const reflectionCategories = [
   {
     id: "feelings",
     title: "What I'm Feeling",
+    color: "cyan" as const,
     prompts: [
       "What emotions have been most present for you today? Can you name them without judging them?",
       "Where do you feel this emotion in your body? What sensations do you notice?",
@@ -27,6 +29,7 @@ const reflectionCategories = [
   {
     id: "situation",
     title: "Understanding What Happened",
+    color: "amber" as const,
     prompts: [
       "If you stepped outside yourself and watched this situation like a movie, what would you see?",
       "What parts of this situation were within your control? What parts weren't?",
@@ -38,6 +41,7 @@ const reflectionCategories = [
   {
     id: "patterns",
     title: "Patterns I Notice",
+    color: "rose" as const,
     prompts: [
       "Does this situation remind you of anything from your past? What feels familiar?",
       "What role do you typically play in relationships? Is that a role you chose?",
@@ -49,6 +53,7 @@ const reflectionCategories = [
   {
     id: "needs",
     title: "What I Need",
+    color: "cyan" as const,
     prompts: [
       "What do you need most right now? Not what you should need—what do you actually need?",
       "When have you felt truly safe and seen in a relationship? What made that possible?",
@@ -60,6 +65,7 @@ const reflectionCategories = [
   {
     id: "growth",
     title: "Moving Forward",
+    color: "green" as const,
     prompts: [
       "What would it mean to be kind to yourself right now? What would that look like in practice?",
       "What are you learning about yourself through this experience?",
@@ -76,13 +82,10 @@ export function GuidedReflection({ onBack }: GuidedReflectionProps) {
   const [response, setResponse] = useState("")
   const [showFollowUp, setShowFollowUp] = useState(false)
 
-  const profile = getUserProfile()
-
   const selectedCategoryData = reflectionCategories.find((c) => c.id === selectedCategory)
   const currentPrompt = selectedCategoryData?.prompts[currentPromptIndex]
 
   const getFollowUpQuestions = (): string[] => {
-    // Dynamic follow-up questions based on the category
     const followUps: Record<string, string[]> = {
       feelings: [
         "What might happen if you allowed this feeling to be here without trying to fix it?",
@@ -157,8 +160,8 @@ export function GuidedReflection({ onBack }: GuidedReflectionProps) {
               <span className="text-sm">Back</span>
             </button>
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-full bg-accent/20 flex items-center justify-center">
-                <PenLine className="w-5 h-5 text-accent" />
+              <div className="w-10 h-10 rounded-full bg-pivot-clarity-cyan/20 flex items-center justify-center">
+                <PenLine className="w-5 h-5 text-pivot-clarity-cyan" />
               </div>
               <div>
                 <h2 className="font-serif text-2xl font-bold text-foreground">Guided Reflection</h2>
@@ -178,17 +181,23 @@ export function GuidedReflection({ onBack }: GuidedReflectionProps) {
 
           <div className="space-y-3">
             {reflectionCategories.map((category, index) => (
-              <motion.button
+              <motion.div
                 key={category.id}
                 initial={{ opacity: 0, x: -20 }}
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ delay: 0.1 + index * 0.05 }}
-                onClick={() => setSelectedCategory(category.id)}
-                className="w-full p-4 rounded-xl bg-card border border-border text-left hover:border-accent/50 transition-colors flex items-center justify-between"
               >
-                <span className="font-medium text-foreground">{category.title}</span>
-                <ChevronRight className="w-5 h-5 text-muted-foreground" />
-              </motion.button>
+                <PivotCard
+                  variant={category.color}
+                  onClick={() => setSelectedCategory(category.id)}
+                  className="cursor-pointer"
+                >
+                  <div className="flex items-center justify-between">
+                    <span className="font-medium text-foreground">{category.title}</span>
+                    <ChevronRight className="w-5 h-5 text-muted-foreground" />
+                  </div>
+                </PivotCard>
+              </motion.div>
             ))}
           </div>
         </div>
@@ -220,25 +229,33 @@ export function GuidedReflection({ onBack }: GuidedReflectionProps) {
               exit={{ opacity: 0, y: -20 }}
               className="space-y-6"
             >
-              <div className="p-5 rounded-xl bg-card border border-border">
+              <PivotCard variant={selectedCategoryData?.color || "cyan"}>
                 <p className="font-serif text-lg text-foreground/90 leading-relaxed italic">"{currentPrompt}"</p>
-              </div>
+              </PivotCard>
 
               <div>
                 <Textarea
                   placeholder="Write whatever comes to mind... There's no wrong answer."
                   value={response}
                   onChange={(e) => setResponse(e.target.value)}
-                  className="min-h-[200px] bg-card border-border"
+                  className="min-h-[200px] bg-pivot-charcoal border-white/10 focus:border-pivot-clarity-cyan"
                 />
               </div>
 
               <div className="flex gap-3">
-                <Button variant="outline" onClick={handleNewPrompt} className="rounded-full bg-transparent">
+                <Button
+                  variant="outline"
+                  onClick={handleNewPrompt}
+                  className="rounded-full bg-transparent border-white/10 text-foreground"
+                >
                   <RefreshCw className="w-4 h-4 mr-2" />
                   Different question
                 </Button>
-                <Button onClick={handleSaveReflection} disabled={!response.trim()} className="flex-1 rounded-full">
+                <Button
+                  onClick={handleSaveReflection}
+                  disabled={!response.trim()}
+                  className="flex-1 rounded-full bg-pivot-clarity-cyan text-pivot-charcoal hover:bg-pivot-clarity-cyan/90"
+                >
                   Save & Continue
                 </Button>
               </div>
@@ -251,21 +268,21 @@ export function GuidedReflection({ onBack }: GuidedReflectionProps) {
               exit={{ opacity: 0, y: -20 }}
               className="space-y-6"
             >
-              <div className="p-4 rounded-xl bg-primary/10 border border-primary/20">
-                <div className="flex items-center gap-2 text-primary mb-2">
+              <PivotCard variant="green">
+                <div className="flex items-center gap-2 text-pivot-growth-green mb-2">
                   <Sparkles className="w-4 h-4" />
                   <span className="text-sm font-medium">Reflection saved</span>
                 </div>
                 <p className="text-sm text-foreground/80">
                   Thank you for taking time to reflect. Here are some questions that might deepen your exploration:
                 </p>
-              </div>
+              </PivotCard>
 
               <div className="space-y-3">
                 {getFollowUpQuestions().map((question, index) => (
-                  <div key={index} className="p-4 rounded-xl bg-card border border-border">
+                  <PivotCard key={index} variant="default">
                     <p className="text-sm text-foreground/80 italic">"{question}"</p>
-                  </div>
+                  </PivotCard>
                 ))}
               </div>
 
@@ -274,10 +291,17 @@ export function GuidedReflection({ onBack }: GuidedReflectionProps) {
               </p>
 
               <div className="flex gap-3">
-                <Button variant="outline" onClick={() => setSelectedCategory(null)} className="flex-1 rounded-full">
+                <Button
+                  variant="outline"
+                  onClick={() => setSelectedCategory(null)}
+                  className="flex-1 rounded-full bg-transparent border-white/10"
+                >
                   Explore other topics
                 </Button>
-                <Button onClick={handleNextPrompt} className="flex-1 rounded-full">
+                <Button
+                  onClick={handleNextPrompt}
+                  className="flex-1 rounded-full bg-pivot-clarity-cyan text-pivot-charcoal"
+                >
                   Another question
                 </Button>
               </div>

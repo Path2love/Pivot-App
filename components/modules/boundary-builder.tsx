@@ -5,13 +5,13 @@ import { motion } from "framer-motion"
 import { ArrowLeft, Shield, ChevronRight, Check, Lightbulb } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Textarea } from "@/components/ui/textarea"
+import { PivotCard } from "@/components/ui/pivot-card"
 import { getBoundaries, saveBoundary, type BoundaryItem } from "@/lib/storage"
 
 interface BoundaryBuilderProps {
   onBack: () => void
 }
 
-// Common boundary scenarios with script templates
 const boundaryScenarios = [
   {
     id: "contact",
@@ -93,7 +93,6 @@ const boundaryScenarios = [
 export function BoundaryBuilder({ onBack }: BoundaryBuilderProps) {
   const [boundaries, setBoundaries] = useState<BoundaryItem[]>(() => getBoundaries())
   const [selectedScenario, setSelectedScenario] = useState<string | null>(null)
-  const [customSituation, setCustomSituation] = useState("")
   const [customScript, setCustomScript] = useState("")
   const [showMyBoundaries, setShowMyBoundaries] = useState(false)
 
@@ -109,7 +108,6 @@ export function BoundaryBuilder({ onBack }: BoundaryBuilderProps) {
     }
     saveBoundary(boundary)
     setBoundaries((prev) => [...prev, boundary])
-    setCustomSituation("")
     setCustomScript("")
     setSelectedScenario(null)
   }
@@ -136,21 +134,18 @@ export function BoundaryBuilder({ onBack }: BoundaryBuilderProps) {
           </motion.div>
 
           {/* Reflection Questions */}
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 0.1 }}
-            className="p-4 rounded-xl bg-accent/10 border border-accent/20 mb-6"
-          >
-            <div className="flex items-center gap-2 text-accent mb-2">
-              <Lightbulb className="w-4 h-4" />
-              <span className="text-sm font-medium">Questions to consider first</span>
-            </div>
-            {selectedScenarioData.prompts.map((prompt, i) => (
-              <p key={i} className="text-sm text-foreground/70 mb-1">
-                • {prompt}
-              </p>
-            ))}
+          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.1 }}>
+            <PivotCard variant="amber" className="mb-6">
+              <div className="flex items-center gap-2 text-pivot-warm-amber mb-2">
+                <Lightbulb className="w-4 h-4" />
+                <span className="text-sm font-medium">Questions to consider first</span>
+              </div>
+              {selectedScenarioData.prompts.map((prompt, i) => (
+                <p key={i} className="text-sm text-foreground/70 mb-1">
+                  • {prompt}
+                </p>
+              ))}
+            </PivotCard>
           </motion.div>
 
           {/* Templates */}
@@ -158,13 +153,14 @@ export function BoundaryBuilder({ onBack }: BoundaryBuilderProps) {
             <h3 className="text-sm text-muted-foreground mb-3">Example scripts (tap to use as starting point)</h3>
             <div className="space-y-2">
               {selectedScenarioData.templates.map((template, i) => (
-                <button
+                <PivotCard
                   key={i}
+                  variant="default"
                   onClick={() => handleUseTemplate(template)}
-                  className="w-full p-3 rounded-xl bg-card border border-border text-left text-sm text-foreground/80 hover:border-primary/50 transition-colors"
+                  className="cursor-pointer hover:border-pivot-clarity-cyan/50"
                 >
-                  "{template}"
-                </button>
+                  <p className="text-sm text-foreground/80">"{template}"</p>
+                </PivotCard>
               ))}
             </div>
           </motion.div>
@@ -182,13 +178,13 @@ export function BoundaryBuilder({ onBack }: BoundaryBuilderProps) {
                 placeholder="Write what feels true and protective for you..."
                 value={customScript}
                 onChange={(e) => setCustomScript(e.target.value)}
-                className="min-h-[120px] bg-card border-border"
+                className="min-h-[120px] bg-pivot-charcoal border-white/10 focus:border-pivot-clarity-cyan"
               />
             </div>
             <Button
               onClick={() => handleSaveBoundary(selectedScenarioData.title, customScript)}
               disabled={!customScript.trim()}
-              className="w-full rounded-full"
+              className="w-full rounded-full bg-pivot-clarity-cyan text-pivot-charcoal hover:bg-pivot-clarity-cyan/90"
             >
               Save this script
             </Button>
@@ -208,8 +204,8 @@ export function BoundaryBuilder({ onBack }: BoundaryBuilderProps) {
             <span className="text-sm">Back</span>
           </button>
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-full bg-amber/20 flex items-center justify-center">
-              <Shield className="w-5 h-5 text-amber" />
+            <div className="w-10 h-10 rounded-full bg-pivot-warm-amber/20 flex items-center justify-center">
+              <Shield className="w-5 h-5 text-pivot-warm-amber" />
             </div>
             <div>
               <h2 className="font-serif text-2xl font-bold text-foreground">Boundary Builder</h2>
@@ -218,16 +214,13 @@ export function BoundaryBuilder({ onBack }: BoundaryBuilderProps) {
           </div>
         </motion.div>
 
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 0.1 }}
-          className="p-4 rounded-xl bg-card border border-border mb-6"
-        >
-          <p className="text-sm text-muted-foreground leading-relaxed">
-            Boundaries aren't walls—they're bridges that let the right things in and keep the harmful things out. Having
-            words ready can help you respond from your values, not your fear.
-          </p>
+        <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.1 }}>
+          <PivotCard variant="default" className="mb-6">
+            <p className="text-sm text-muted-foreground leading-relaxed">
+              Boundaries aren't walls—they're bridges that let the right things in and keep the harmful things out.
+              Having words ready can help you respond from your values, not your fear.
+            </p>
+          </PivotCard>
         </motion.div>
 
         {/* Toggle between scenarios and saved boundaries */}
@@ -235,14 +228,14 @@ export function BoundaryBuilder({ onBack }: BoundaryBuilderProps) {
           <Button
             variant={!showMyBoundaries ? "default" : "outline"}
             onClick={() => setShowMyBoundaries(false)}
-            className="flex-1 rounded-full"
+            className={`flex-1 rounded-full ${!showMyBoundaries ? "bg-pivot-clarity-cyan text-pivot-charcoal" : "bg-transparent border-white/10"}`}
           >
             Scenarios
           </Button>
           <Button
             variant={showMyBoundaries ? "default" : "outline"}
             onClick={() => setShowMyBoundaries(true)}
-            className="flex-1 rounded-full"
+            className={`flex-1 rounded-full ${showMyBoundaries ? "bg-pivot-clarity-cyan text-pivot-charcoal" : "bg-transparent border-white/10"}`}
           >
             My Scripts ({boundaries.length})
           </Button>
@@ -251,22 +244,26 @@ export function BoundaryBuilder({ onBack }: BoundaryBuilderProps) {
         {!showMyBoundaries ? (
           <div className="space-y-3">
             {boundaryScenarios.map((scenario, index) => (
-              <motion.button
+              <motion.div
                 key={scenario.id}
                 initial={{ opacity: 0, x: -20 }}
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ delay: 0.1 + index * 0.05 }}
-                onClick={() => setSelectedScenario(scenario.id)}
-                className="w-full p-4 rounded-xl bg-card border border-border text-left hover:border-amber/50 transition-colors"
               >
-                <div className="flex items-center justify-between">
-                  <div>
-                    <h3 className="font-medium text-foreground">{scenario.title}</h3>
-                    <p className="text-sm text-muted-foreground mt-1">{scenario.description}</p>
+                <PivotCard
+                  variant="default"
+                  onClick={() => setSelectedScenario(scenario.id)}
+                  className="cursor-pointer hover:border-pivot-warm-amber/50"
+                >
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <h3 className="font-medium text-foreground">{scenario.title}</h3>
+                      <p className="text-sm text-muted-foreground mt-1">{scenario.description}</p>
+                    </div>
+                    <ChevronRight className="w-5 h-5 text-muted-foreground shrink-0" />
                   </div>
-                  <ChevronRight className="w-5 h-5 text-muted-foreground shrink-0" />
-                </div>
-              </motion.button>
+                </PivotCard>
+              </motion.div>
             ))}
           </div>
         ) : (
@@ -277,18 +274,18 @@ export function BoundaryBuilder({ onBack }: BoundaryBuilderProps) {
               </div>
             ) : (
               boundaries.map((boundary) => (
-                <div key={boundary.id} className="p-4 rounded-xl bg-card border border-border">
+                <PivotCard key={boundary.id} variant="default">
                   <div className="flex items-start justify-between mb-2">
-                    <span className="text-xs text-amber font-medium uppercase tracking-wider">
+                    <span className="text-xs text-pivot-warm-amber font-medium uppercase tracking-wider">
                       {boundary.situation}
                     </span>
-                    {boundary.practiced && <Check className="w-4 h-4 text-primary" />}
+                    {boundary.practiced && <Check className="w-4 h-4 text-pivot-growth-green" />}
                   </div>
                   <p className="text-sm text-foreground/80">"{boundary.script}"</p>
                   <p className="text-xs text-muted-foreground mt-2">
                     Saved {new Date(boundary.createdAt).toLocaleDateString()}
                   </p>
-                </div>
+                </PivotCard>
               ))
             )}
           </div>

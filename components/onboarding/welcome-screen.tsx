@@ -22,11 +22,11 @@ export function WelcomeScreen({ onNext }: WelcomeScreenProps) {
         transition={{ delay: 0.2, duration: 0.5 }}
         className="mb-8"
       >
-        <div className="w-20 h-20 rounded-full bg-primary/20 flex items-center justify-center mb-6 mx-auto">
-          <Compass className="w-10 h-10 text-primary" />
+        <div className="w-20 h-20 rounded-full bg-pivot-clarity-cyan/20 flex items-center justify-center mb-6 mx-auto">
+          <Compass className="w-10 h-10 text-pivot-clarity-cyan" />
         </div>
         <h1 className="font-serif text-4xl font-bold text-foreground mb-2">THE PIVOT</h1>
-        <p className="text-muted-foreground text-sm tracking-widest uppercase">A Space for Clarity</p>
+        <p className="text-pivot-clarity-cyan text-sm tracking-widest uppercase">When Love Needs Logic</p>
       </motion.div>
 
       <motion.div
@@ -42,7 +42,7 @@ export function WelcomeScreen({ onNext }: WelcomeScreenProps) {
           This is a space to process, explore, and find your own answers. No judgment. No timelines you didn&apos;t
           choose. Just gentle questions to help you understand what you&apos;re experiencing.
         </p>
-        <div className="flex items-center justify-center gap-2 mt-6 text-accent">
+        <div className="flex items-center justify-center gap-2 mt-6 text-pivot-warm-amber">
           <Heart className="w-4 h-4" />
           <span className="text-sm">For all identities and all experiences</span>
         </div>
@@ -52,7 +52,7 @@ export function WelcomeScreen({ onNext }: WelcomeScreenProps) {
         <Button
           onClick={onNext}
           size="lg"
-          className="px-12 py-6 text-lg font-medium rounded-full bg-primary text-primary-foreground hover:bg-primary/90 transition-all duration-300"
+          className="px-12 py-6 text-lg font-medium rounded-full bg-pivot-clarity-cyan text-pivot-charcoal hover:bg-pivot-clarity-cyan/90 transition-all duration-300"
         >
           Let&apos;s Begin
         </Button>

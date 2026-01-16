@@ -1,23 +1,23 @@
 import type React from "react"
 import type { Metadata, Viewport } from "next"
-import { Inter, Playfair_Display } from "next/font/google"
+import { DM_Sans, Fraunces } from "next/font/google"
 import { Analytics } from "@vercel/analytics/next"
 import "./globals.css"
 
-const inter = Inter({
+const dmSans = DM_Sans({
   subsets: ["latin"],
-  variable: "--font-inter",
+  variable: "--font-dm-sans",
 })
 
-const playfair = Playfair_Display({
+const fraunces = Fraunces({
   subsets: ["latin"],
-  variable: "--font-playfair",
+  variable: "--font-fraunces",
 })
 
 export const metadata: Metadata = {
-  title: "THE PIVOT - Your Clarity Journey",
+  title: "THE PIVOT - When Love Needs Logic",
   description:
-    "A digital safe harbor for navigating relationship crisis with compassion, clarity, and LGBTQ+ inclusivity.",
+    "A digital safe harbor for navigating relationship crisis. Clarity tools for everyone - any attachment style, any situation.",
   generator: "v0.app",
 }
 
@@ -26,7 +26,7 @@ export const viewport: Viewport = {
   initialScale: 1,
   maximumScale: 1,
   userScalable: false,
-  themeColor: "#1e1b2e",
+  themeColor: "#0c0a09",
 }
 
 export default function RootLayout({
@@ -36,7 +36,9 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className="dark">
-      <body className={`${inter.variable} ${playfair.variable} font-sans antialiased min-h-screen`}>
+      <body
+        className={`${dmSans.variable} ${fraunces.variable} font-sans antialiased min-h-screen bg-background text-foreground`}
+      >
         {children}
         <Analytics />
       </body>

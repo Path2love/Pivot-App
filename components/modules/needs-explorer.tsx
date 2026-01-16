@@ -3,6 +3,7 @@
 import { useState } from "react"
 import { motion } from "framer-motion"
 import { ArrowLeft, Heart, Plus, Check, Trash2, Lightbulb } from "lucide-react"
+import { PivotCard } from "@/components/ui/pivot-card"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { cn } from "@/lib/utils"
@@ -13,11 +14,12 @@ interface NeedsExplorerProps {
   embedded?: boolean
 }
 
-// Prompt questions to help discover needs - organized by category
 const needsPrompts = [
   {
     category: "Safety & Security",
-    color: "text-primary",
+    color: "text-pivot-logic-blue",
+    bgColor: "bg-pivot-logic-blue/10",
+    borderColor: "border-pivot-logic-blue/30",
     prompts: [
       "What makes you feel safe in a relationship?",
       "What does consistency look like for you?",
@@ -31,7 +33,9 @@ const needsPrompts = [
   },
   {
     category: "Communication",
-    color: "text-accent",
+    color: "text-pivot-heart-burgundy",
+    bgColor: "bg-pivot-heart-burgundy/10",
+    borderColor: "border-pivot-heart-burgundy/30",
     prompts: [
       "What kind of communication helps you feel connected?",
       "How do you need conflict to be handled?",
@@ -45,7 +49,9 @@ const needsPrompts = [
   },
   {
     category: "Presence & Attention",
-    color: "text-amber",
+    color: "text-pivot-clarity-cyan",
+    bgColor: "bg-pivot-clarity-cyan/10",
+    borderColor: "border-pivot-clarity-cyan/30",
     prompts: [
       "What does quality time mean to you?",
       "How do you know someone is truly present with you?",
@@ -59,7 +65,9 @@ const needsPrompts = [
   },
   {
     category: "Integration & Inclusion",
-    color: "text-primary",
+    color: "text-pivot-logic-blue",
+    bgColor: "bg-pivot-logic-blue/10",
+    borderColor: "border-pivot-logic-blue/30",
     prompts: [
       "How important is it to be included in your partner's life?",
       "What role do you want to play in their world?",
@@ -73,7 +81,9 @@ const needsPrompts = [
   },
   {
     category: "Growth & Support",
-    color: "text-accent",
+    color: "text-pivot-heart-burgundy",
+    bgColor: "bg-pivot-heart-burgundy/10",
+    borderColor: "border-pivot-heart-burgundy/30",
     prompts: [
       "What kind of support do you need when you're struggling?",
       "How do you want to grow together with a partner?",
@@ -123,7 +133,7 @@ export function NeedsExplorer({ onBack, embedded = false }: NeedsExplorerProps) 
   const otherNeeds = userNeeds.filter((n) => !n.isCore)
 
   return (
-    <div className={cn("min-h-screen", !embedded && "pb-24")}>
+    <div className={cn("min-h-screen", embedded ? "pb-24" : "pb-8")}>
       <div className="px-6 py-8">
         <motion.div initial={{ opacity: 0, y: -20 }} animate={{ opacity: 1, y: 0 }} className="mb-6">
           {!embedded && (
@@ -136,26 +146,25 @@ export function NeedsExplorer({ onBack, embedded = false }: NeedsExplorerProps) 
             </button>
           )}
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-full bg-primary/20 flex items-center justify-center">
-              <Heart className="w-5 h-5 text-primary" />
+            <div className="w-12 h-12 rounded-xl bg-pivot-heart-burgundy/20 flex items-center justify-center">
+              <Heart className="w-6 h-6 text-pivot-heart-burgundy" />
             </div>
             <div>
-              <h2 className="font-serif text-2xl font-bold text-foreground">Needs Discovery</h2>
-              <p className="text-sm text-muted-foreground">Uncover what matters most to you</p>
+              <h2 className="font-serif text-2xl font-bold text-foreground">Needs Navigator</h2>
+              <p className="text-sm text-muted-foreground">Uncover your non-negotiables</p>
             </div>
           </div>
         </motion.div>
 
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 0.1 }}
-          className="p-4 rounded-xl bg-card border border-border mb-6"
-        >
-          <p className="text-sm text-muted-foreground leading-relaxed">
-            Needs aren't demands or being "too much." They're what you require to feel safe, seen, and valued. Use the
-            prompts below to discover yours, or add your own.
-          </p>
+        <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.1 }}>
+          <PivotCard variant="heart" className="p-4 mb-6" hover={false}>
+            <p className="text-sm text-foreground/90 leading-relaxed mb-2">
+              Needs aren't demands or being "too much." They're what you require to feel safe, seen, and valued.
+            </p>
+            <p className="text-sm text-muted-foreground italic">
+              "Systemic Reliability"—evaluate partners by behavior during stress, not just static good times.
+            </p>
+          </PivotCard>
         </motion.div>
 
         {/* Discovery Prompts */}
@@ -171,19 +180,17 @@ export function NeedsExplorer({ onBack, embedded = false }: NeedsExplorerProps) 
             <div className="space-y-3">
               {needsPrompts.map((category) => (
                 <div key={category.category}>
-                  <button
+                  <PivotCard
+                    className={cn(
+                      "p-4 cursor-pointer transition-all",
+                      selectedCategory === category.category && `${category.borderColor} border`,
+                    )}
                     onClick={() =>
                       setSelectedCategory(selectedCategory === category.category ? null : category.category)
                     }
-                    className={cn(
-                      "w-full p-4 rounded-xl border text-left transition-colors",
-                      selectedCategory === category.category
-                        ? "bg-card border-primary/50"
-                        : "bg-card/50 border-border hover:border-primary/30",
-                    )}
                   >
                     <span className={cn("font-medium", category.color)}>{category.category}</span>
-                  </button>
+                  </PivotCard>
 
                   {selectedCategory === category.category && (
                     <motion.div
@@ -191,7 +198,7 @@ export function NeedsExplorer({ onBack, embedded = false }: NeedsExplorerProps) 
                       animate={{ opacity: 1, height: "auto" }}
                       className="mt-3 space-y-3 pl-4"
                     >
-                      <div className="p-3 rounded-lg bg-secondary/30">
+                      <div className={cn("p-3 rounded-lg", category.bgColor)}>
                         <p className="text-xs text-muted-foreground mb-2">Questions to consider:</p>
                         {category.prompts.map((prompt, i) => (
                           <p key={i} className="text-sm text-foreground/70 mb-1">
@@ -200,13 +207,13 @@ export function NeedsExplorer({ onBack, embedded = false }: NeedsExplorerProps) 
                         ))}
                       </div>
 
-                      <div className="p-3 rounded-lg bg-secondary/30">
-                        <p className="text-xs text-muted-foreground mb-2">Example needs:</p>
+                      <div className="p-3 rounded-lg bg-pivot-slate-900/50">
+                        <p className="text-xs text-muted-foreground mb-2">Example needs (tap to add):</p>
                         {category.examples.map((example, i) => (
                           <button
                             key={i}
                             onClick={() => handleAddNeed(example, category.category)}
-                            className="block w-full text-left text-sm text-foreground/70 mb-2 hover:text-foreground transition-colors"
+                            className="block w-full text-left text-sm text-foreground/70 mb-2 hover:text-pivot-clarity-cyan transition-colors"
                           >
                             + "{example}"
                           </button>
@@ -218,7 +225,7 @@ export function NeedsExplorer({ onBack, embedded = false }: NeedsExplorerProps) 
                           placeholder="Write your own..."
                           value={newNeed}
                           onChange={(e) => setNewNeed(e.target.value)}
-                          className="bg-card border-border text-sm"
+                          className="bg-pivot-slate-900/50 border-pivot-slate-800 text-sm"
                           onKeyDown={(e) => {
                             if (e.key === "Enter") {
                               handleAddNeed(newNeed, category.category)
@@ -229,6 +236,7 @@ export function NeedsExplorer({ onBack, embedded = false }: NeedsExplorerProps) 
                           size="sm"
                           onClick={() => handleAddNeed(newNeed, category.category)}
                           disabled={!newNeed.trim()}
+                          className="bg-pivot-logic-blue hover:bg-pivot-logic-blue/90"
                         >
                           <Plus className="w-4 h-4" />
                         </Button>
@@ -242,7 +250,7 @@ export function NeedsExplorer({ onBack, embedded = false }: NeedsExplorerProps) 
         )}
 
         {!showPrompts && (
-          <Button variant="outline" onClick={() => setShowPrompts(true)} className="mb-6 w-full">
+          <Button variant="outline" onClick={() => setShowPrompts(true)} className="mb-6 w-full border-pivot-slate-800">
             <Lightbulb className="w-4 h-4 mr-2" />
             Show discovery prompts
           </Button>
@@ -252,17 +260,14 @@ export function NeedsExplorer({ onBack, embedded = false }: NeedsExplorerProps) 
         {coreNeeds.length > 0 && (
           <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="mb-6">
             <h3 className="font-medium text-foreground mb-3 flex items-center gap-2">
-              <Heart className="w-4 h-4 text-primary" />
-              Core Needs ({coreNeeds.length})
+              <Heart className="w-4 h-4 text-pivot-heart-burgundy" />
+              Core Non-Negotiables ({coreNeeds.length})
             </h3>
             <div className="space-y-2">
               {coreNeeds.map((need) => (
-                <div
-                  key={need.id}
-                  className="p-3 rounded-xl bg-primary/10 border border-primary/20 flex items-start gap-3"
-                >
+                <PivotCard key={need.id} variant="heart" className="p-3 flex items-start gap-3" hover={false} glow>
                   <button onClick={() => handleToggleCore(need.id)} className="mt-0.5">
-                    <Check className="w-4 h-4 text-primary" />
+                    <Check className="w-4 h-4 text-pivot-heart-burgundy" />
                   </button>
                   <div className="flex-1">
                     <p className="text-sm text-foreground">{need.text}</p>
@@ -274,7 +279,7 @@ export function NeedsExplorer({ onBack, embedded = false }: NeedsExplorerProps) 
                   >
                     <Trash2 className="w-4 h-4" />
                   </button>
-                </div>
+                </PivotCard>
               ))}
             </div>
           </motion.div>
@@ -289,10 +294,10 @@ export function NeedsExplorer({ onBack, embedded = false }: NeedsExplorerProps) 
             </h3>
             <div className="space-y-2">
               {otherNeeds.map((need) => (
-                <div key={need.id} className="p-3 rounded-xl bg-card border border-border flex items-start gap-3">
+                <PivotCard key={need.id} className="p-3 flex items-start gap-3" hover={false}>
                   <button
                     onClick={() => handleToggleCore(need.id)}
-                    className="mt-0.5 w-4 h-4 rounded border border-muted-foreground/30 hover:border-primary"
+                    className="mt-0.5 w-4 h-4 rounded border border-muted-foreground/30 hover:border-pivot-heart-burgundy"
                   />
                   <div className="flex-1">
                     <p className="text-sm text-foreground/80">{need.text}</p>
@@ -304,7 +309,7 @@ export function NeedsExplorer({ onBack, embedded = false }: NeedsExplorerProps) 
                   >
                     <Trash2 className="w-4 h-4" />
                   </button>
-                </div>
+                </PivotCard>
               ))}
             </div>
           </motion.div>
