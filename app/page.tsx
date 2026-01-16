@@ -5,6 +5,7 @@ import { AnimatePresence } from "framer-motion"
 import { HeroHome } from "@/components/landing/hero-home"
 import { SystemAudit } from "@/components/audit/system-audit"
 import { NextSteps } from "@/components/audit/next-steps"
+import { MissionBriefing } from "@/components/audit/mission-briefing"
 import { WelcomeScreen } from "@/components/onboarding/welcome-screen"
 import { IdentityScreen } from "@/components/onboarding/identity-screen"
 import { SituationScreen } from "@/components/onboarding/situation-screen"
@@ -24,7 +25,7 @@ import { NavBar } from "@/components/dashboard/nav-bar"
 import { PanicButton } from "@/components/dashboard/panic-button"
 import { getUserProfile, saveUserProfile } from "@/lib/storage"
 
-type AppState = "hero" | "audit" | "next-steps" | "onboarding" | "dashboard"
+type AppState = "hero" | "audit" | "next-steps" | "mission-briefing" | "onboarding" | "dashboard"
 type OnboardingStep = "welcome" | "identity" | "situation" | "attachment" | "living" | "timeline" | "complete"
 type AppTab = "home" | "process" | "explore" | "tools"
 type SubView = null | "reflection" | "checkin" | "vault" | "patterns" | "needs" | "boundaries"
@@ -39,38 +40,37 @@ export default function ThePivot() {
   useEffect(() => {
     const profile = getUserProfile()
 
-    // Determine initial state based on profile
-    if (profile.onboardingComplete) {
+    if (profile.onboardingComplete && profile.auditProfile) {
       setAppState("dashboard")
-    } else if (profile.auditProfile) {
-      setAppState("next-steps")
-    } else if (profile.statusPath) {
+    } else if (profile.auditProfile && !profile.onboardingComplete) {
+      setAppState("mission-briefing")
+    } else if (profile.statusPath && !profile.auditProfile) {
       setAppState("audit")
+    } else {
+      setAppState("hero")
     }
 
     setIsLoading(false)
   }, [])
 
-  // Handlers for Hero Home
-  const handleStatusSelect = () => {
-    // Status is saved in the component
-  }
+  const handleStatusSelect = () => {}
 
   const handleStartJourney = () => {
     setAppState("audit")
   }
 
-  // Handlers for System Audit
   const handleAuditComplete = () => {
     setAppState("next-steps")
   }
 
-  // Handlers for Next Steps
   const handleNextStepsComplete = () => {
+    setAppState("mission-briefing")
+  }
+
+  const handleMissionBriefingComplete = () => {
     setAppState("onboarding")
   }
 
-  // Onboarding handlers
   const handleIdentityComplete = (data: { age: string; identity: string; pronouns: string }) => {
     saveUserProfile({ age: data.age, identity: data.identity, pronouns: data.pronouns })
     setOnboardingStep("situation")
@@ -118,12 +118,11 @@ export default function ThePivot() {
   if (isLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-background">
-        <div className="w-8 h-8 border-2 border-pivot-clarity-cyan border-t-transparent rounded-full animate-spin" />
+        <div className="w-8 h-8 border-2 border-[#00f5ff] border-t-transparent rounded-full animate-spin" />
       </div>
     )
   }
 
-  // Hero Home
   if (appState === "hero") {
     return (
       <main className="min-h-screen bg-background">
@@ -132,7 +131,6 @@ export default function ThePivot() {
     )
   }
 
-  // System Audit
   if (appState === "audit") {
     return (
       <main className="min-h-screen bg-background">
@@ -141,7 +139,6 @@ export default function ThePivot() {
     )
   }
 
-  // Next Steps
   if (appState === "next-steps") {
     return (
       <main className="min-h-screen bg-background">
@@ -150,7 +147,14 @@ export default function ThePivot() {
     )
   }
 
-  // Onboarding Flow
+  if (appState === "mission-briefing") {
+    return (
+      <main className="min-h-screen bg-background">
+        <MissionBriefing onEnterDashboard={handleMissionBriefingComplete} />
+      </main>
+    )
+  }
+
   if (appState === "onboarding") {
     return (
       <main className="min-h-screen bg-background">
@@ -169,7 +173,6 @@ export default function ThePivot() {
     )
   }
 
-  // Sub-views (full screen modules)
   if (subView) {
     return (
       <main className="min-h-screen bg-background">
@@ -185,7 +188,6 @@ export default function ThePivot() {
     )
   }
 
-  // Main Dashboard
   return (
     <main className="min-h-screen bg-background">
       <AnimatePresence mode="wait">

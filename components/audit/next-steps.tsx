@@ -99,22 +99,18 @@ export function NextSteps({ onContinue }: NextStepsProps) {
         </div>
       </motion.div>
 
-      {/* CTA */}
+      {/* CTA - Updated button text */}
       <motion.div
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ delay: 0.7 }}
         className="mt-auto space-y-4"
       >
-        <p className="text-center text-muted-foreground text-sm italic">
-          "This isn't about getting them back. It's about getting YOU back."
-        </p>
-
         <Button
           onClick={onContinue}
           className="w-full rounded-full py-6 bg-pivot-logic-blue hover:bg-pivot-logic-blue/90 text-white glow-cyan-subtle"
         >
-          Start Your 14-Day Reset
+          Continue
           <ArrowRight className="w-4 h-4 ml-2" />
         </Button>
       </motion.div>

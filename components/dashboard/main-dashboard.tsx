@@ -1,7 +1,7 @@
 "use client"
 
 import { motion } from "framer-motion"
-import { Activity, TrendingUp, Lock, Brain } from "lucide-react"
+import { Activity, TrendingUp, Lock, Brain, Compass, Shield } from "lucide-react"
 import { ClarityClock } from "./clarity-clock"
 import { DailyAnchorCard } from "./daily-anchor-card"
 import { PivotCard } from "@/components/ui/pivot-card"
@@ -52,8 +52,8 @@ export function MainDashboard({ onOpenSubView }: MainDashboardProps) {
           <ClarityClock />
           <div className="mt-3 px-4 py-2 rounded-full bg-pivot-logic-blue/10 border border-pivot-logic-blue/20">
             <p className="text-sm text-foreground/80">
-              <span className="text-pivot-clarity-cyan font-medium">Neurochemistry:</span> Stabilizing (Day {currentDay}{" "}
-              of {duration})
+              <span className="text-[#00f5ff] font-medium">Neurochemistry:</span> Stabilizing (Day {currentDay} of{" "}
+              {duration})
             </p>
           </div>
         </motion.div>
@@ -90,12 +90,12 @@ export function MainDashboard({ onOpenSubView }: MainDashboardProps) {
             <PivotCard className="p-4" hover={false}>
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
-                  <Activity className="w-4 h-4 text-pivot-clarity-cyan" />
+                  <Activity className="w-4 h-4 text-[#00f5ff]" />
                   <span className="text-sm text-muted-foreground">Today's check-in complete</span>
                 </div>
                 <div className="flex items-center gap-3 text-sm">
                   <span className="text-muted-foreground">Mood:</span>
-                  <span className="font-medium text-pivot-clarity-cyan">{todayCheckIn.mood}/10</span>
+                  <span className="font-medium text-[#00f5ff]">{todayCheckIn.mood}/10</span>
                 </div>
               </div>
             </PivotCard>
@@ -107,24 +107,38 @@ export function MainDashboard({ onOpenSubView }: MainDashboardProps) {
           <DailyAnchorCard dayNumber={currentDay} />
         </motion.div>
 
-        {/* Quick Actions */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.4 }}
-          className="grid grid-cols-2 gap-3 mt-6"
+          className="mt-6"
         >
-          <PivotCard variant="logic" className="p-4 cursor-pointer" onClick={() => onOpenSubView("vault")}>
-            <Lock className="w-5 h-5 text-pivot-logic-blue mb-2" />
-            <p className="font-medium text-foreground text-sm">Safety Vault</p>
-            <p className="text-xs text-muted-foreground mt-1">Deposit unsent words</p>
-          </PivotCard>
+          <h3 className="text-sm font-medium text-muted-foreground mb-3">Your Toolkit</h3>
+          <div className="grid grid-cols-2 gap-3">
+            <PivotCard variant="logic" className="p-4 cursor-pointer" onClick={() => onOpenSubView("vault")}>
+              <Lock className="w-5 h-5 text-pivot-logic-blue mb-2" />
+              <p className="font-medium text-foreground text-sm">Safety Vault</p>
+              <p className="text-xs text-muted-foreground mt-1">Deposit unsent words</p>
+            </PivotCard>
 
-          <PivotCard variant="clarity" className="p-4 cursor-pointer" onClick={() => onOpenSubView("patterns")}>
-            <Brain className="w-5 h-5 text-pivot-clarity-cyan mb-2" />
-            <p className="font-medium text-foreground text-sm">Patterns</p>
-            <p className="text-xs text-muted-foreground mt-1">Understand the "why"</p>
-          </PivotCard>
+            <PivotCard variant="clarity" className="p-4 cursor-pointer" onClick={() => onOpenSubView("patterns")}>
+              <Brain className="w-5 h-5 text-[#00f5ff] mb-2" />
+              <p className="font-medium text-foreground text-sm">Patterns</p>
+              <p className="text-xs text-muted-foreground mt-1">Understand the "why"</p>
+            </PivotCard>
+
+            <PivotCard variant="default" className="p-4 cursor-pointer" onClick={() => onOpenSubView("needs")}>
+              <Compass className="w-5 h-5 text-pivot-warm-amber mb-2" />
+              <p className="font-medium text-foreground text-sm">Needs Navigator</p>
+              <p className="text-xs text-muted-foreground mt-1">Identify what matters</p>
+            </PivotCard>
+
+            <PivotCard variant="heart" className="p-4 cursor-pointer" onClick={() => onOpenSubView("boundaries")}>
+              <Shield className="w-5 h-5 text-pivot-heart-burgundy mb-2" />
+              <p className="font-medium text-foreground text-sm">Boundaries</p>
+              <p className="text-xs text-muted-foreground mt-1">Protect your space</p>
+            </PivotCard>
+          </div>
         </motion.div>
 
         {/* Footer Message */}

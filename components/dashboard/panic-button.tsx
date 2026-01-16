@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect, useCallback } from "react"
+import { useState, useEffect, useCallback, useRef } from "react"
 import { motion, AnimatePresence } from "framer-motion"
 import { X } from "lucide-react"
 
@@ -8,19 +8,27 @@ export function PanicButton() {
   const [isActive, setIsActive] = useState(false)
   const [phase, setPhase] = useState<"inhale" | "hold" | "exhale">("inhale")
   const [timer, setTimer] = useState(4)
-  const [cycles, setCycles] = useState(0)
+  const [totalSeconds, setTotalSeconds] = useState(0)
+  const exerciseStartRef = useRef<number | null>(null)
 
   const resetExercise = useCallback(() => {
     setIsActive(false)
     setPhase("inhale")
     setTimer(4)
-    setCycles(0)
+    setTotalSeconds(0)
+    exerciseStartRef.current = null
   }, [])
 
   useEffect(() => {
     if (!isActive) return
 
+    if (!exerciseStartRef.current) {
+      exerciseStartRef.current = Date.now()
+    }
+
     const interval = setInterval(() => {
+      setTotalSeconds((prev) => prev + 1)
+
       setTimer((prev) => {
         if (prev <= 1) {
           if (phase === "inhale") {
@@ -30,8 +38,7 @@ export function PanicButton() {
             setPhase("exhale")
             return 8
           } else {
-            // Complete one cycle
-            setCycles((c) => c + 1)
+            // Complete one cycle (4+4+8 = 16 seconds per cycle)
             setPhase("inhale")
             return 4
           }
@@ -49,12 +56,15 @@ export function PanicButton() {
     exhale: "Breathe Out Slowly",
   }
 
+  const cyclesCompleted = Math.floor(totalSeconds / 16)
+  const isComplete = totalSeconds >= 60
+
   return (
     <>
-      {/* Floating Panic Button - Burgundy with Cyan core */}
       <motion.button
         onClick={() => setIsActive(true)}
-        className="fixed bottom-24 right-4 w-14 h-14 rounded-full bg-pivot-heart-burgundy flex items-center justify-center shadow-lg z-40"
+        className="fixed bottom-24 right-4 w-14 h-14 rounded-full flex items-center justify-center shadow-lg z-40"
+        style={{ backgroundColor: "#691d33" }}
         whileHover={{ scale: 1.05 }}
         whileTap={{ scale: 0.95 }}
         animate={{
@@ -66,7 +76,13 @@ export function PanicButton() {
           ease: "easeInOut",
         }}
       >
-        <div className="w-4 h-4 rounded-full bg-pivot-clarity-cyan" />
+        <div
+          className="w-4 h-4 rounded-full"
+          style={{
+            backgroundColor: "#00f5ff",
+            boxShadow: "0 0 10px #00f5ff, 0 0 20px #00f5ff",
+          }}
+        />
       </motion.button>
 
       {/* Breathing Exercise Modal */}
@@ -85,9 +101,9 @@ export function PanicButton() {
               <X className="w-5 h-5" />
             </button>
 
-            {/* Breathing visualization - Burgundy circle with Cyan core */}
             <motion.div
-              className="w-52 h-52 rounded-full bg-pivot-heart-burgundy/30 flex items-center justify-center"
+              className="w-52 h-52 rounded-full flex items-center justify-center"
+              style={{ backgroundColor: "rgba(105, 29, 51, 0.3)" }}
               animate={{
                 scale: phase === "inhale" ? [1, 1.3] : phase === "exhale" ? [1.3, 1] : 1.3,
               }}
@@ -97,7 +113,8 @@ export function PanicButton() {
               }}
             >
               <motion.div
-                className="w-36 h-36 rounded-full bg-pivot-heart-burgundy/50 flex items-center justify-center"
+                className="w-36 h-36 rounded-full flex items-center justify-center"
+                style={{ backgroundColor: "rgba(105, 29, 51, 0.5)" }}
                 animate={{
                   scale: phase === "inhale" ? [1, 1.2] : phase === "exhale" ? [1.2, 1] : 1.2,
                 }}
@@ -107,7 +124,11 @@ export function PanicButton() {
                 }}
               >
                 <motion.div
-                  className="w-20 h-20 rounded-full bg-pivot-clarity-cyan/80 flex items-center justify-center glow-cyan"
+                  className="w-20 h-20 rounded-full flex items-center justify-center"
+                  style={{
+                    backgroundColor: "rgba(0, 245, 255, 0.8)",
+                    boxShadow: "0 0 30px #00f5ff, 0 0 60px #00f5ff",
+                  }}
                   animate={{
                     scale: phase === "inhale" ? [1, 1.15] : phase === "exhale" ? [1.15, 1] : 1.15,
                   }}
@@ -116,7 +137,7 @@ export function PanicButton() {
                     ease: "easeInOut",
                   }}
                 >
-                  <span className="font-serif text-4xl font-bold text-pivot-clarity-foreground">{timer}</span>
+                  <span className="font-serif text-4xl font-bold text-slate-900">{timer}</span>
                 </motion.div>
               </motion.div>
             </motion.div>
@@ -141,25 +162,42 @@ export function PanicButton() {
               {["inhale", "hold", "exhale"].map((p) => (
                 <div
                   key={p}
-                  className={`w-3 h-3 rounded-full transition-colors ${
-                    phase === p ? "bg-pivot-clarity-cyan glow-cyan-subtle" : "bg-secondary"
-                  }`}
+                  className={`w-3 h-3 rounded-full transition-colors ${phase === p ? "bg-[#00f5ff]" : "bg-secondary"}`}
+                  style={phase === p ? { boxShadow: "0 0 10px #00f5ff" } : {}}
                 />
               ))}
             </div>
 
-            {/* Cycles counter */}
-            {cycles > 0 && <p className="mt-4 text-muted-foreground text-sm">Cycles completed: {cycles}</p>}
+            <div className="mt-6 w-48">
+              <div className="flex justify-between text-xs text-muted-foreground mb-1">
+                <span>Progress</span>
+                <span>{Math.min(totalSeconds, 60)}s / 60s</span>
+              </div>
+              <div className="h-1 bg-secondary rounded-full overflow-hidden">
+                <motion.div
+                  className="h-full rounded-full"
+                  style={{ backgroundColor: "#00f5ff" }}
+                  initial={{ width: "0%" }}
+                  animate={{ width: `${Math.min((totalSeconds / 60) * 100, 100)}%` }}
+                />
+              </div>
+            </div>
 
-            {/* Closing message after 3 cycles */}
-            {cycles >= 3 && (
+            {/* Cycles counter */}
+            {cyclesCompleted > 0 && (
+              <p className="mt-4 text-muted-foreground text-sm">Cycles completed: {cyclesCompleted}</p>
+            )}
+
+            {isComplete && (
               <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="mt-6 text-center">
-                <p className="text-pivot-clarity-cyan font-medium">The urge has passed.</p>
+                <p className="text-[#00f5ff] font-medium" style={{ textShadow: "0 0 10px #00f5ff" }}>
+                  The urge has passed.
+                </p>
                 <p className="text-muted-foreground text-sm">You are still on solid ground.</p>
               </motion.div>
             )}
 
-            <p className="absolute bottom-12 text-muted-foreground/60 text-xs">4-4-8 Breathing Exercise</p>
+            <p className="absolute bottom-12 text-muted-foreground/60 text-xs">Somatic Panic Mode • 4-4-8 Breathing</p>
           </motion.div>
         )}
       </AnimatePresence>
