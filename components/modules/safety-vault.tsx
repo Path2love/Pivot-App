@@ -2,7 +2,7 @@
 
 import { useState } from "react"
 import { motion, AnimatePresence } from "framer-motion"
-import { ArrowLeft, Lock, Sparkles, ChevronDown, ChevronUp, Clock } from "lucide-react"
+import { ArrowLeft, Lock, Sparkles, Clock } from "lucide-react"
 import { PivotCard } from "@/components/ui/pivot-card"
 import { Button } from "@/components/ui/button"
 import { Textarea } from "@/components/ui/textarea"
@@ -63,8 +63,11 @@ export function SafetyVault({ onBack }: SafetyVaultProps) {
         <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.1 }}>
           <PivotCard variant="logic" className="p-5 mb-6" hover={false}>
             <p className="text-foreground/90 leading-relaxed text-sm mb-3">
-              This is where the texts you're desperate to send come to rest. Write them here instead. Lock them away.
-              Give yourself 24 hours before you decide anything.
+              <span className="font-medium">Step 1:</span> Paste or write the message you want to send.
+            </p>
+            <p className="text-foreground/90 leading-relaxed text-sm mb-3">
+              <span className="font-medium">Step 2:</span> Deposit it instead of sending. The app will give you a
+              reality-check so you can decide later.
             </p>
             <div className="flex items-center gap-2 text-pivot-clarity-cyan text-sm">
               <Clock className="w-4 h-4" />
@@ -86,12 +89,13 @@ export function SafetyVault({ onBack }: SafetyVaultProps) {
               <div>
                 <label className="block text-sm text-muted-foreground mb-2">What are you desperate to say?</label>
                 <Textarea
-                  placeholder="Write the message you want to send..."
+                  placeholder="Type the message you're tempted to send..."
                   value={text}
                   onChange={(e) => setText(e.target.value)}
                   className="min-h-[180px] bg-pivot-slate-900/50 border-pivot-slate-800"
                 />
               </div>
+              <p className="text-xs text-muted-foreground text-center">You're not sending this. You're parking it.</p>
               <Button
                 onClick={handleDeposit}
                 disabled={!text.trim()}
@@ -142,7 +146,7 @@ export function SafetyVault({ onBack }: SafetyVaultProps) {
               className="flex items-center justify-between w-full text-sm text-muted-foreground mb-3"
             >
               <span>Vault History ({pastEntries.length})</span>
-              {showPastEntries ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
+              <span className="text-xs">{showPastEntries ? "Tap to hide" : "Tap to see"}</span>
             </button>
 
             {showPastEntries && (

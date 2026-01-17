@@ -134,9 +134,11 @@ export function PatternLibrary({ onBack, embedded = false }: PatternLibraryProps
         {/* Intro */}
         <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.1 }}>
           <PivotCard variant="clarity" className="p-5 mb-6" hover={false}>
-            <p className="text-foreground/90 leading-relaxed text-sm">
-              These patterns aren't about blame—they're about clarity. Understanding why something happened is the first
-              step to understanding what you need.
+            <p className="text-foreground/90 leading-relaxed text-sm mb-2">
+              These aren't diagnoses—they're simple explanations of common patterns.
+            </p>
+            <p className="text-muted-foreground text-sm">
+              Tap a card to learn why certain behaviors felt so confusing.
             </p>
           </PivotCard>
         </motion.div>
@@ -159,11 +161,16 @@ export function PatternLibrary({ onBack, embedded = false }: PatternLibraryProps
                     <h3 className="font-serif text-lg font-semibold text-foreground mb-1">{pattern.title}</h3>
                     <p className="text-muted-foreground text-sm">{pattern.subtitle}</p>
                   </div>
-                  {expandedId === pattern.id ? (
-                    <ChevronUp className="w-5 h-5 text-muted-foreground flex-shrink-0 mt-1" />
-                  ) : (
-                    <ChevronDown className="w-5 h-5 text-muted-foreground flex-shrink-0 mt-1" />
-                  )}
+                  <div className="flex flex-col items-center">
+                    {expandedId === pattern.id ? (
+                      <ChevronUp className="w-5 h-5 text-muted-foreground flex-shrink-0" />
+                    ) : (
+                      <ChevronDown className="w-5 h-5 text-muted-foreground flex-shrink-0" />
+                    )}
+                    <span className="text-[10px] text-muted-foreground mt-1">
+                      {expandedId === pattern.id ? "Close" : "Tap"}
+                    </span>
+                  </div>
                 </button>
 
                 <AnimatePresence>

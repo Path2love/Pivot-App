@@ -102,6 +102,19 @@ export function PanicButton() {
             </button>
 
             <motion.div
+              initial={{ opacity: 0, y: -20 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="absolute top-20 text-center px-6"
+            >
+              <p className="text-sm text-foreground/80 mb-1">
+                Use this when you feel a spike of anxiety or an urge to reach out.
+              </p>
+              <p className="text-xs text-muted-foreground">
+                Follow the circle: inhale, hold, and exhale with the timing.
+              </p>
+            </motion.div>
+
+            <motion.div
               className="w-52 h-52 rounded-full flex items-center justify-center"
               style={{ backgroundColor: "rgba(105, 29, 51, 0.3)" }}
               animate={{
@@ -194,6 +207,9 @@ export function PanicButton() {
                   The urge has passed.
                 </p>
                 <p className="text-muted-foreground text-sm">You are still on solid ground.</p>
+                <p className="text-xs text-muted-foreground mt-2">
+                  When you're ready, pause before deciding what to do next.
+                </p>
               </motion.div>
             )}
 

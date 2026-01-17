@@ -159,10 +159,10 @@ export function NeedsExplorer({ onBack, embedded = false }: NeedsExplorerProps) 
         <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.1 }}>
           <PivotCard variant="heart" className="p-4 mb-6" hover={false}>
             <p className="text-sm text-foreground/90 leading-relaxed mb-2">
-              Needs aren't demands or being "too much." They're what you require to feel safe, seen, and valued.
+              List what you need from any healthy relationship.
             </p>
-            <p className="text-sm text-muted-foreground italic">
-              "Systemic Reliability"—evaluate partners by behavior during stress, not just static good times.
+            <p className="text-sm text-muted-foreground">
+              Tap the checkbox to mark a need as "core" (your non-negotiables).
             </p>
           </PivotCard>
         </motion.div>
@@ -189,7 +189,10 @@ export function NeedsExplorer({ onBack, embedded = false }: NeedsExplorerProps) 
                       setSelectedCategory(selectedCategory === category.category ? null : category.category)
                     }
                   >
-                    <span className={cn("font-medium", category.color)}>{category.category}</span>
+                    <div className="flex items-center justify-between">
+                      <span className={cn("font-medium", category.color)}>{category.category}</span>
+                      <span className="text-xs text-muted-foreground">Tap to explore</span>
+                    </div>
                   </PivotCard>
 
                   {selectedCategory === category.category && (
@@ -288,10 +291,8 @@ export function NeedsExplorer({ onBack, embedded = false }: NeedsExplorerProps) 
         {/* Other Needs */}
         {otherNeeds.length > 0 && (
           <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
-            <h3 className="font-medium text-foreground mb-3">
-              All Needs ({otherNeeds.length})
-              <span className="text-xs text-muted-foreground font-normal ml-2">Tap check to mark as core</span>
-            </h3>
+            <h3 className="font-medium text-foreground mb-2">All Needs ({otherNeeds.length})</h3>
+            <p className="text-xs text-muted-foreground mb-3">Tap the checkbox to mark as core</p>
             <div className="space-y-2">
               {otherNeeds.map((need) => (
                 <PivotCard key={need.id} className="p-3 flex items-start gap-3" hover={false}>

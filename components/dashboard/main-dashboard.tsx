@@ -34,12 +34,24 @@ export function MainDashboard({ onOpenSubView }: MainDashboardProps) {
         <motion.div
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
-          className="flex items-center justify-between mb-6"
+          className="flex items-center justify-between mb-4"
         >
           <div>
             <h1 className="font-serif text-2xl font-bold text-foreground">The Anchor</h1>
             <p className="text-muted-foreground text-sm">{statusMessage}</p>
           </div>
+        </motion.div>
+
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 0.05 }}
+          className="mb-6 p-3 rounded-lg bg-pivot-logic-blue/10 border border-pivot-logic-blue/20"
+        >
+          <p className="text-sm text-foreground/80 text-center">This is your home base for the next {duration} days.</p>
+          <p className="text-xs text-muted-foreground text-center mt-1">
+            Check your daily anchor, then use the tools as needed.
+          </p>
         </motion.div>
 
         {/* Clarity Clock */}
@@ -61,6 +73,9 @@ export function MainDashboard({ onOpenSubView }: MainDashboardProps) {
         {/* Daily Check-in Prompt */}
         {!todayCheckIn && (
           <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }}>
+            <p className="text-xs text-muted-foreground text-center mb-2">
+              Start here each day: read today's anchor, then respond to the check-in.
+            </p>
             <PivotCard
               variant="logic"
               className="p-4 mb-4 cursor-pointer"
@@ -113,7 +128,8 @@ export function MainDashboard({ onOpenSubView }: MainDashboardProps) {
           transition={{ delay: 0.4 }}
           className="mt-6"
         >
-          <h3 className="text-sm font-medium text-muted-foreground mb-3">Your Toolkit</h3>
+          <h3 className="text-sm font-medium text-muted-foreground mb-2">Your Toolkit</h3>
+          <p className="text-xs text-muted-foreground mb-3">Tap any tool below to open it.</p>
           <div className="grid grid-cols-2 gap-3">
             <PivotCard variant="logic" className="p-4 cursor-pointer" onClick={() => onOpenSubView("vault")}>
               <Lock className="w-5 h-5 text-pivot-logic-blue mb-2" />

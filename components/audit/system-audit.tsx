@@ -54,31 +54,35 @@ export function SystemAudit({ onComplete }: SystemAuditProps) {
 
   if (showIntro) {
     return (
-      <div className="min-h-screen px-6 py-12 flex flex-col">
+      <div className="min-h-screen px-6 py-8 flex flex-col">
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="flex-1 flex flex-col">
-          <div className="flex items-center gap-3 mb-8">
+          <div className="flex items-center gap-3 mb-6">
             <div className="w-12 h-12 rounded-xl bg-pivot-clarity-cyan/20 flex items-center justify-center">
               <Brain className="w-6 h-6 text-pivot-clarity-cyan" />
             </div>
             <div>
-              <h1 className="font-serif text-2xl font-bold text-foreground">The System Audit</h1>
-              <p className="text-muted-foreground text-sm">10 Questions to Map Your Logic</p>
+              <h1 className="font-serif text-2xl font-bold text-foreground">System Audit: 10 Quick Questions</h1>
+              <p className="text-muted-foreground text-sm">Map Your Relationship's Architecture</p>
             </div>
           </div>
 
-          <PivotCard variant="default" className="p-6 mb-8" hover={false}>
+          <PivotCard variant="default" className="p-6 mb-6" hover={false}>
             <p className="text-foreground/90 leading-relaxed mb-4">
-              This isn't a "relationship quiz." It's a diagnostic tool—designed to help you see patterns that are hard
-              to see from the inside.
+              For each card, choose the option that feels most like your relationship. There are no right answers—just
+              patterns.
             </p>
             <p className="text-muted-foreground text-sm leading-relaxed mb-4">
-              For each question, pick the option that feels most true, even if it's uncomfortable. There are no wrong
-              answers—only data.
+              This isn't a "relationship quiz." It's a diagnostic tool—designed to help you see patterns that are hard
+              to see from the inside.
             </p>
             <p className="text-muted-foreground text-sm italic">
               Remember: This is about understanding the system, not assigning blame.
             </p>
           </PivotCard>
+
+          <div className="p-3 rounded-lg bg-pivot-logic-blue/10 border border-pivot-logic-blue/20 mb-6">
+            <p className="text-sm text-foreground/80 text-center">You'll see your result and a plan at the end.</p>
+          </div>
 
           <div className="mt-auto">
             <Button
@@ -112,6 +116,9 @@ export function SystemAudit({ onComplete }: SystemAuditProps) {
           <div className="w-5" /> {/* Spacer */}
         </div>
         <Progress value={progress} className="h-1" />
+        <p className="text-xs text-muted-foreground text-center mt-2">
+          Tap an option to answer, then use the arrow to go back if needed.
+        </p>
       </div>
 
       {/* Question */}
@@ -184,6 +191,9 @@ export function SystemAudit({ onComplete }: SystemAuditProps) {
       {/* Complete Button */}
       {isComplete && (
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="mt-6">
+          <p className="text-xs text-muted-foreground text-center mb-3">
+            You've answered all 10 questions. Ready to see what the data says?
+          </p>
           <Button
             onClick={handleComplete}
             className="w-full rounded-full py-6 bg-pivot-clarity-cyan hover:bg-pivot-clarity-cyan/90 text-pivot-clarity-foreground glow-cyan"

@@ -38,6 +38,14 @@ export function MissionBriefing({ onEnterDashboard }: MissionBriefingProps) {
 
   return (
     <div className="min-h-screen px-6 py-12 flex flex-col">
+      <motion.p
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        className="text-center text-muted-foreground text-sm mb-4"
+      >
+        You've finished the audit. Here's what it means and what happens next.
+      </motion.p>
+
       {/* Success Icon */}
       <motion.div
         initial={{ opacity: 0, scale: 0.8 }}
@@ -105,6 +113,17 @@ export function MissionBriefing({ onEnterDashboard }: MissionBriefingProps) {
         </p>
         <p className="text-muted-foreground text-sm mt-2 italic">
           Your priority is not "fixing" the relationship—it is stabilizing your system.
+        </p>
+      </motion.div>
+
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ delay: 0.7 }}
+        className="text-center mb-6"
+      >
+        <p className="text-sm text-muted-foreground">
+          Next step: Tap 'Enter My Dashboard' to start your 14-day clarity window.
         </p>
       </motion.div>
 

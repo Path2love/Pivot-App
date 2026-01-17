@@ -47,31 +47,31 @@ const howItWorksSteps = [
     step: 1,
     title: "The Status Check",
     description:
-      "We begin by identifying your current location (Limbo, Shutdown, or Post-Breakup) so the system can calibrate to your specific nervous system state.",
+      "You will tell us where you are. We begin by identifying your current location (Limbo, Shutdown, or Post-Breakup) so the system can calibrate to your specific nervous system state.",
   },
   {
     step: 2,
     title: "The System Audit",
     description:
-      "A 10-question behavioral diagnostic. This isn't about 'feelings'—it's an engineering report on the reliability of your relationship's architecture.",
+      "You will answer 10 short questions. This isn't about 'feelings'—it's an engineering report on the reliability of your relationship's architecture.",
   },
   {
     step: 3,
     title: "The Profile",
     description:
-      "We categorize the connection as an Integrated System, a Compartmentalized System, or a Shutdown Cycle to remove the mystery of 'what happened'.",
+      "You will see what kind of system you were in. We categorize the connection as an Integrated System, a Compartmentalized System, or a Shutdown Cycle to remove the mystery of 'what happened'.",
   },
   {
     step: 4,
     title: "The 14-Day Reset",
     description:
-      "A science-backed window to stabilize your neurochemistry. You'll receive a daily 'Logic Anchor' to counter 'Heart Panic'.",
+      "You will get a 14-day plan. A science-backed window to stabilize your neurochemistry with a daily 'Logic Anchor' to counter 'Heart Panic'.",
   },
   {
     step: 5,
     title: "The Toolkit",
     description:
-      "Access to the Safety Vault (for dopamine cravings), Pattern Recognition (to stop self-blame), and Somatic Panic Mode (to ground your body).",
+      "You will use tools to stay steady. Access to the Safety Vault (for dopamine cravings), Pattern Recognition (to stop self-blame), and Somatic Panic Mode (to ground your body).",
   },
 ]
 
@@ -161,7 +161,10 @@ export function HeroHome({ onStatusSelect, onStartJourney }: HeroHomeProps) {
         transition={{ delay: 0.2 }}
         className="mb-10"
       >
-        <h2 className="text-center text-lg font-medium text-foreground mb-6">Where are you right now?</h2>
+        <h2 className="text-center text-lg font-medium text-foreground mb-2">Where are you right now?</h2>
+        <p className="text-center text-sm text-muted-foreground mb-6">
+          Step 1: Tap the card that best matches your situation.
+        </p>
 
         <div className="space-y-3">
           {statusPaths.map((status, index) => (
@@ -203,6 +206,7 @@ export function HeroHome({ onStatusSelect, onStartJourney }: HeroHomeProps) {
         </div>
       </motion.div>
 
+      {/* What You'll Get */}
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
@@ -260,6 +264,8 @@ export function HeroHome({ onStatusSelect, onStartJourney }: HeroHomeProps) {
           "This isn't about getting them back. It's about getting YOU back."
         </p>
 
+        <p className="text-center text-xs text-muted-foreground">Step 2: When you're ready, start the System Audit.</p>
+
         <Button
           onClick={handleStart}
           disabled={!selectedStatus}
@@ -276,6 +282,7 @@ export function HeroHome({ onStatusSelect, onStartJourney }: HeroHomeProps) {
         >
           See How It Works
         </Button>
+        <p className="text-center text-xs text-muted-foreground">Not sure yet? Tap here for a quick overview.</p>
       </motion.div>
 
       {/* Footer */}
@@ -299,7 +306,7 @@ export function HeroHome({ onStatusSelect, onStartJourney }: HeroHomeProps) {
         >
           <div className="min-h-screen px-6 py-12">
             <div className="max-w-lg mx-auto">
-              <div className="flex items-center justify-between mb-8">
+              <div className="flex items-center justify-between mb-4">
                 <h2 className="font-serif text-2xl font-bold text-foreground">How It Works</h2>
                 <button
                   onClick={() => setShowHowItWorks(false)}
@@ -308,6 +315,10 @@ export function HeroHome({ onStatusSelect, onStartJourney }: HeroHomeProps) {
                   <X className="w-5 h-5" />
                 </button>
               </div>
+
+              <p className="text-muted-foreground text-sm mb-8">
+                In 5 steps, here's exactly what this app will do with you.
+              </p>
 
               <div className="space-y-4">
                 {howItWorksSteps.map((item, index) => (
