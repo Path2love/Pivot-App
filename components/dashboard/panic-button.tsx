@@ -106,11 +106,11 @@ export function PanicButton() {
               animate={{ opacity: 1, y: 0 }}
               className="absolute top-20 text-center px-6"
             >
-              <p className="text-sm text-foreground/80 mb-1">
-                Use this when you feel a spike of anxiety or an urge to reach out.
-              </p>
-              <p className="text-xs text-muted-foreground">
-                Follow the circle: inhale, hold, and exhale with the timing.
+              <h2 className="text-lg font-semibold text-foreground mb-2">Somatic Panic Mode</h2>
+              <p className="text-base text-foreground/80 mb-1">Use this when your body is in overdrive.</p>
+              <p className="text-base text-muted-foreground">
+                Tap the button when you feel a surge of anxiety. Follow the breathing loop until it finishes, then wait
+                a moment before acting.
               </p>
             </motion.div>
 
@@ -163,7 +163,7 @@ export function PanicButton() {
               className="mt-12 text-center"
             >
               <h3 className="font-serif text-2xl text-foreground mb-2">{phaseInstructions[phase]}</h3>
-              <p className="text-muted-foreground text-sm">
+              <p className="text-muted-foreground text-base">
                 {phase === "inhale" && "Fill your lungs slowly"}
                 {phase === "hold" && "Keep the breath in"}
                 {phase === "exhale" && "Release slowly through your mouth"}
@@ -203,11 +203,11 @@ export function PanicButton() {
 
             {isComplete && (
               <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="mt-6 text-center">
-                <p className="text-[#00f5ff] font-medium" style={{ textShadow: "0 0 10px #00f5ff" }}>
+                <p className="text-[#00f5ff] font-medium text-lg" style={{ textShadow: "0 0 10px #00f5ff" }}>
                   The urge has passed.
                 </p>
-                <p className="text-muted-foreground text-sm">You are still on solid ground.</p>
-                <p className="text-xs text-muted-foreground mt-2">
+                <p className="text-base text-muted-foreground">You are still on solid ground.</p>
+                <p className="text-base text-muted-foreground mt-2">
                   When you're ready, pause before deciding what to do next.
                 </p>
               </motion.div>

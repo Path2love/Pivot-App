@@ -120,25 +120,28 @@ export function PatternLibrary({ onBack, embedded = false }: PatternLibraryProps
               <span className="text-sm">Back</span>
             </button>
           )}
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-3 mb-4">
             <div className="w-12 h-12 rounded-xl bg-pivot-clarity-cyan/20 flex items-center justify-center">
               <Brain className="w-6 h-6 text-pivot-clarity-cyan" />
             </div>
             <div>
-              <h2 className="font-serif text-2xl font-bold text-foreground">Pattern Recognition</h2>
-              <p className="text-sm text-muted-foreground">Understanding the "why" behind the behavior</p>
+              <h2 className="font-serif text-2xl font-bold text-foreground">Pattern Library</h2>
             </div>
           </div>
+          <h3 className="text-lg font-semibold text-foreground mb-2">Use this when their behavior makes no sense.</h3>
+          <p className="text-base text-foreground/80 leading-relaxed">
+            Pick one pattern that feels familiar and read it. The goal is to see the system, not blame yourself.
+          </p>
         </motion.div>
 
         {/* Intro */}
         <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.1 }}>
           <PivotCard variant="clarity" className="p-5 mb-6" hover={false}>
-            <p className="text-foreground/90 leading-relaxed text-sm mb-2">
+            <p className="text-base text-foreground/90 leading-relaxed mb-2">
               These aren't diagnoses—they're simple explanations of common patterns.
             </p>
-            <p className="text-muted-foreground text-sm">
-              Tap a card to learn why certain behaviors felt so confusing.
+            <p className="text-base text-muted-foreground">
+              Tap any card below to learn why certain behaviors felt so confusing.
             </p>
           </PivotCard>
         </motion.div>
@@ -184,7 +187,7 @@ export function PatternLibrary({ onBack, embedded = false }: PatternLibraryProps
                     >
                       {/* Logic explanation */}
                       <div className="p-4 rounded-xl bg-pivot-logic-blue/10 border border-pivot-logic-blue/20 mb-4">
-                        <p className="text-foreground/90 text-sm leading-relaxed">{pattern.logic}</p>
+                        <p className="text-base text-foreground/90 leading-relaxed">{pattern.logic}</p>
                       </div>
 
                       {/* Details */}

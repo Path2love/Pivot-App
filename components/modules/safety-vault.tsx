@@ -48,25 +48,29 @@ export function SafetyVault({ onBack }: SafetyVaultProps) {
             <ArrowLeft className="w-4 h-4" />
             <span className="text-sm">Back</span>
           </button>
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-3 mb-4">
             <div className="w-12 h-12 rounded-xl bg-pivot-logic-blue/20 flex items-center justify-center">
               <Lock className="w-6 h-6 text-pivot-logic-blue" />
             </div>
             <div>
-              <h2 className="font-serif text-2xl font-bold text-foreground">The Safety Vault</h2>
-              <p className="text-sm text-muted-foreground">Write it. Lock it. Give yourself 24 hours.</p>
+              <h2 className="font-serif text-2xl font-bold text-foreground">Safety Vault</h2>
             </div>
           </div>
+          <h3 className="text-lg font-semibold text-foreground mb-2">Use this when you want to text them.</h3>
+          <p className="text-base text-foreground/80 leading-relaxed">
+            Paste or type the message you want to send. Deposit it here instead, then read the reality-check before
+            deciding.
+          </p>
         </motion.div>
 
         {/* Intro */}
         <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.1 }}>
           <PivotCard variant="logic" className="p-5 mb-6" hover={false}>
-            <p className="text-foreground/90 leading-relaxed text-sm mb-3">
-              <span className="font-medium">Step 1:</span> Paste or write the message you want to send.
+            <p className="text-base text-foreground/90 leading-relaxed mb-3">
+              <span className="font-semibold">Step 1:</span> Write the message you're tempted to send.
             </p>
-            <p className="text-foreground/90 leading-relaxed text-sm mb-3">
-              <span className="font-medium">Step 2:</span> Deposit it instead of sending. The app will give you a
+            <p className="text-base text-foreground/90 leading-relaxed mb-3">
+              <span className="font-semibold">Step 2:</span> Deposit it instead of sending. The app will give you a
               reality-check so you can decide later.
             </p>
             <div className="flex items-center gap-2 text-pivot-clarity-cyan text-sm">
@@ -87,7 +91,7 @@ export function SafetyVault({ onBack }: SafetyVaultProps) {
               className="space-y-4"
             >
               <div>
-                <label className="block text-sm text-muted-foreground mb-2">What are you desperate to say?</label>
+                <label className="block text-base text-foreground/80 mb-2">What are you desperate to say?</label>
                 <Textarea
                   placeholder="Type the message you're tempted to send..."
                   value={text}
@@ -95,7 +99,7 @@ export function SafetyVault({ onBack }: SafetyVaultProps) {
                   className="min-h-[180px] bg-pivot-slate-900/50 border-pivot-slate-800"
                 />
               </div>
-              <p className="text-xs text-muted-foreground text-center">You're not sending this. You're parking it.</p>
+              <p className="text-sm text-muted-foreground text-center">You're not sending this. You're parking it.</p>
               <Button
                 onClick={handleDeposit}
                 disabled={!text.trim()}
@@ -116,9 +120,9 @@ export function SafetyVault({ onBack }: SafetyVaultProps) {
               <PivotCard variant="clarity" className="p-5" glow hover={false}>
                 <div className="flex items-center gap-2 text-pivot-clarity-cyan mb-4">
                   <Sparkles className="w-4 h-4" />
-                  <span className="font-medium">Words Secured</span>
+                  <span className="font-semibold text-lg">Words Secured</span>
                 </div>
-                <p className="text-foreground leading-relaxed mb-4">
+                <p className="text-base text-foreground leading-relaxed mb-4">
                   If you send this now, you are medicating their choice. Let them feel the silence so they can find
                   their own truth.
                 </p>

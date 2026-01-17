@@ -145,24 +145,30 @@ export function NeedsExplorer({ onBack, embedded = false }: NeedsExplorerProps) 
               <span className="text-sm">Back</span>
             </button>
           )}
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-3 mb-4">
             <div className="w-12 h-12 rounded-xl bg-pivot-heart-burgundy/20 flex items-center justify-center">
               <Heart className="w-6 h-6 text-pivot-heart-burgundy" />
             </div>
             <div>
               <h2 className="font-serif text-2xl font-bold text-foreground">Needs Navigator</h2>
-              <p className="text-sm text-muted-foreground">Uncover your non-negotiables</p>
             </div>
           </div>
+          <h3 className="text-lg font-semibold text-foreground mb-2">
+            Use this when you're thinking about "what next."
+          </h3>
+          <p className="text-base text-foreground/80 leading-relaxed">
+            List and reorder what you need from any partner. Use this to decide what has to change if this continues or
+            if you reconnect.
+          </p>
         </motion.div>
 
         <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.1 }}>
           <PivotCard variant="heart" className="p-4 mb-6" hover={false}>
-            <p className="text-sm text-foreground/90 leading-relaxed mb-2">
-              List what you need from any healthy relationship.
+            <p className="text-base text-foreground/90 leading-relaxed mb-2">
+              Tap the checkbox next to any need to mark it as "core" (your non-negotiables).
             </p>
-            <p className="text-sm text-muted-foreground">
-              Tap the checkbox to mark a need as "core" (your non-negotiables).
+            <p className="text-base text-muted-foreground">
+              These are the things you will not compromise on in any relationship.
             </p>
           </PivotCard>
         </motion.div>
@@ -171,7 +177,7 @@ export function NeedsExplorer({ onBack, embedded = false }: NeedsExplorerProps) 
         {showPrompts && (
           <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.2 }} className="mb-8">
             <div className="flex items-center justify-between mb-4">
-              <h3 className="font-medium text-foreground">Explore by category</h3>
+              <h3 className="text-lg font-semibold text-foreground">Explore by category</h3>
               <button onClick={() => setShowPrompts(false)} className="text-xs text-muted-foreground hover:underline">
                 Hide prompts
               </button>
@@ -190,7 +196,7 @@ export function NeedsExplorer({ onBack, embedded = false }: NeedsExplorerProps) 
                     }
                   >
                     <div className="flex items-center justify-between">
-                      <span className={cn("font-medium", category.color)}>{category.category}</span>
+                      <span className={cn("font-medium text-base", category.color)}>{category.category}</span>
                       <span className="text-xs text-muted-foreground">Tap to explore</span>
                     </div>
                   </PivotCard>
@@ -202,21 +208,21 @@ export function NeedsExplorer({ onBack, embedded = false }: NeedsExplorerProps) 
                       className="mt-3 space-y-3 pl-4"
                     >
                       <div className={cn("p-3 rounded-lg", category.bgColor)}>
-                        <p className="text-xs text-muted-foreground mb-2">Questions to consider:</p>
+                        <p className="text-sm text-muted-foreground mb-2">Questions to consider:</p>
                         {category.prompts.map((prompt, i) => (
-                          <p key={i} className="text-sm text-foreground/70 mb-1">
+                          <p key={i} className="text-base text-foreground/70 mb-1">
                             • {prompt}
                           </p>
                         ))}
                       </div>
 
                       <div className="p-3 rounded-lg bg-pivot-slate-900/50">
-                        <p className="text-xs text-muted-foreground mb-2">Example needs (tap to add):</p>
+                        <p className="text-sm text-muted-foreground mb-2">Example needs (tap to add):</p>
                         {category.examples.map((example, i) => (
                           <button
                             key={i}
                             onClick={() => handleAddNeed(example, category.category)}
-                            className="block w-full text-left text-sm text-foreground/70 mb-2 hover:text-pivot-clarity-cyan transition-colors"
+                            className="block w-full text-left text-base text-foreground/70 mb-2 hover:text-pivot-clarity-cyan transition-colors"
                           >
                             + "{example}"
                           </button>
@@ -228,7 +234,7 @@ export function NeedsExplorer({ onBack, embedded = false }: NeedsExplorerProps) 
                           placeholder="Write your own..."
                           value={newNeed}
                           onChange={(e) => setNewNeed(e.target.value)}
-                          className="bg-pivot-slate-900/50 border-pivot-slate-800 text-sm"
+                          className="bg-pivot-slate-900/50 border-pivot-slate-800 text-base"
                           onKeyDown={(e) => {
                             if (e.key === "Enter") {
                               handleAddNeed(newNeed, category.category)
@@ -262,7 +268,7 @@ export function NeedsExplorer({ onBack, embedded = false }: NeedsExplorerProps) 
         {/* Core Needs */}
         {coreNeeds.length > 0 && (
           <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="mb-6">
-            <h3 className="font-medium text-foreground mb-3 flex items-center gap-2">
+            <h3 className="text-lg font-semibold text-foreground mb-3 flex items-center gap-2">
               <Heart className="w-4 h-4 text-pivot-heart-burgundy" />
               Core Non-Negotiables ({coreNeeds.length})
             </h3>
@@ -273,7 +279,7 @@ export function NeedsExplorer({ onBack, embedded = false }: NeedsExplorerProps) 
                     <Check className="w-4 h-4 text-pivot-heart-burgundy" />
                   </button>
                   <div className="flex-1">
-                    <p className="text-sm text-foreground">{need.text}</p>
+                    <p className="text-base text-foreground">{need.text}</p>
                     <p className="text-xs text-muted-foreground mt-1">{need.category}</p>
                   </div>
                   <button
@@ -291,8 +297,8 @@ export function NeedsExplorer({ onBack, embedded = false }: NeedsExplorerProps) 
         {/* Other Needs */}
         {otherNeeds.length > 0 && (
           <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
-            <h3 className="font-medium text-foreground mb-2">All Needs ({otherNeeds.length})</h3>
-            <p className="text-xs text-muted-foreground mb-3">Tap the checkbox to mark as core</p>
+            <h3 className="text-lg font-semibold text-foreground mb-2">All Needs ({otherNeeds.length})</h3>
+            <p className="text-base text-foreground/80 mb-3">Tap the checkbox to mark as core</p>
             <div className="space-y-2">
               {otherNeeds.map((need) => (
                 <PivotCard key={need.id} className="p-3 flex items-start gap-3" hover={false}>
@@ -301,7 +307,7 @@ export function NeedsExplorer({ onBack, embedded = false }: NeedsExplorerProps) 
                     className="mt-0.5 w-4 h-4 rounded border border-muted-foreground/30 hover:border-pivot-heart-burgundy"
                   />
                   <div className="flex-1">
-                    <p className="text-sm text-foreground/80">{need.text}</p>
+                    <p className="text-base text-foreground/80">{need.text}</p>
                     <p className="text-xs text-muted-foreground mt-1">{need.category}</p>
                   </div>
                   <button
