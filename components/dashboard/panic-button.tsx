@@ -3,6 +3,7 @@
 import { useState, useEffect, useCallback, useRef } from "react"
 import { motion, AnimatePresence } from "framer-motion"
 import { X } from "lucide-react"
+import { incrementUsageStat } from "@/lib/storage"
 
 export function PanicButton() {
   const [isActive, setIsActive] = useState(false)
@@ -18,6 +19,11 @@ export function PanicButton() {
     setTotalSeconds(0)
     exerciseStartRef.current = null
   }, [])
+
+  const startExercise = () => {
+    setIsActive(true)
+    incrementUsageStat("panicModeUses")
+  }
 
   useEffect(() => {
     if (!isActive) return
@@ -38,7 +44,6 @@ export function PanicButton() {
             setPhase("exhale")
             return 8
           } else {
-            // Complete one cycle (4+4+8 = 16 seconds per cycle)
             setPhase("inhale")
             return 4
           }
@@ -62,7 +67,7 @@ export function PanicButton() {
   return (
     <>
       <motion.button
-        onClick={() => setIsActive(true)}
+        onClick={startExercise}
         className="fixed bottom-24 right-4 w-14 h-14 rounded-full flex items-center justify-center shadow-lg z-40"
         style={{ backgroundColor: "#691d33" }}
         whileHover={{ scale: 1.05 }}
@@ -106,11 +111,10 @@ export function PanicButton() {
               animate={{ opacity: 1, y: 0 }}
               className="absolute top-20 text-center px-6"
             >
-              <h2 className="text-lg font-semibold text-foreground mb-2">Somatic Panic Mode</h2>
-              <p className="text-base text-foreground/80 mb-1">Use this when your body is in overdrive.</p>
-              <p className="text-base text-muted-foreground">
-                Tap the button when you feel a surge of anxiety. Follow the breathing loop until it finishes, then wait
-                a moment before acting.
+              <h2 className="text-lg font-semibold text-foreground mb-1">Somatic Panic Mode</h2>
+              <p className="text-sm text-muted-foreground">Use this when your body is in overdrive.</p>
+              <p className="text-sm text-muted-foreground mt-1">
+                Start the loop and breathe with the circle until it finishes.
               </p>
             </motion.div>
 
@@ -163,7 +167,7 @@ export function PanicButton() {
               className="mt-12 text-center"
             >
               <h3 className="font-serif text-2xl text-foreground mb-2">{phaseInstructions[phase]}</h3>
-              <p className="text-muted-foreground text-base">
+              <p className="text-muted-foreground text-sm">
                 {phase === "inhale" && "Fill your lungs slowly"}
                 {phase === "hold" && "Keep the breath in"}
                 {phase === "exhale" && "Release slowly through your mouth"}
@@ -196,24 +200,19 @@ export function PanicButton() {
               </div>
             </div>
 
-            {/* Cycles counter */}
-            {cyclesCompleted > 0 && (
-              <p className="mt-4 text-muted-foreground text-sm">Cycles completed: {cyclesCompleted}</p>
-            )}
+            {cyclesCompleted > 0 && <p className="mt-4 text-muted-foreground text-xs">Cycles: {cyclesCompleted}</p>}
 
             {isComplete && (
               <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="mt-6 text-center">
                 <p className="text-[#00f5ff] font-medium text-lg" style={{ textShadow: "0 0 10px #00f5ff" }}>
                   The urge has passed.
                 </p>
-                <p className="text-base text-muted-foreground">You are still on solid ground.</p>
-                <p className="text-base text-muted-foreground mt-2">
-                  When you're ready, pause before deciding what to do next.
-                </p>
+                <p className="text-sm text-muted-foreground">You are still on solid ground.</p>
+                <p className="text-sm text-muted-foreground mt-2">Pause before deciding what to do next.</p>
               </motion.div>
             )}
 
-            <p className="absolute bottom-12 text-muted-foreground/60 text-xs">Somatic Panic Mode • 4-4-8 Breathing</p>
+            <p className="absolute bottom-12 text-muted-foreground/60 text-xs">4-4-8 Breathing</p>
           </motion.div>
         )}
       </AnimatePresence>

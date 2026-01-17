@@ -1,14 +1,20 @@
 "use client"
 
 import { motion } from "framer-motion"
-import { Activity, TrendingUp, Lock, Brain, Compass, Shield, Lightbulb } from "lucide-react"
+import { Activity, TrendingUp, Lock, Brain, Compass, Shield, Lightbulb, AlertCircle, Sparkles } from "lucide-react"
 import { ClarityClock } from "./clarity-clock"
 import { DailyAnchorCard } from "./daily-anchor-card"
 import { PivotCard } from "@/components/ui/pivot-card"
-import { getUserProfile, getCurrentDay, getCheckIns } from "@/lib/storage"
+import { getUserProfile, getCurrentDay, getCheckIns, getUsageStats, getVaultEntries, getUserNeeds } from "@/lib/storage"
 
 interface MainDashboardProps {
   onOpenSubView: (view: string) => void
+}
+
+const screenTransition = {
+  initial: { opacity: 0, y: 12 },
+  animate: { opacity: 1, y: 0 },
+  transition: { duration: 0.25, ease: "easeOut" },
 }
 
 export function MainDashboard({ onOpenSubView }: MainDashboardProps) {
@@ -18,7 +24,10 @@ export function MainDashboard({ onOpenSubView }: MainDashboardProps) {
   const checkIns = getCheckIns()
   const todayCheckIn = checkIns.find((c) => new Date(c.date).toDateString() === new Date().toDateString())
 
-  // Status-specific copy
+  const usageStats = getUsageStats()
+  const vaultEntries = getVaultEntries()
+  const userNeeds = getUserNeeds()
+
   const statusCopy = {
     limbo: "Your nervous system is learning to trust the silence.",
     shutdown: "Every day of quiet is a day of healing.",
@@ -29,16 +38,33 @@ export function MainDashboard({ onOpenSubView }: MainDashboardProps) {
 
   const getDayGuidance = () => {
     if (currentDay <= 3) {
-      return "If you feel panicky or desperate to reach out, use the Safety Vault first. If your body feels tight or flooded, tap the Somatic Panic button (bottom right)."
+      return { tool: "vault", text: "If you want to text them, use Safety Vault first." }
     } else if (currentDay <= 7) {
-      return "If you keep replaying their behavior, open Pattern Library and read one pattern. If you're unsure what you need, open Needs Navigator."
+      return { tool: "patterns", text: "If their behavior confuses you, read one Pattern." }
     } else {
-      return "If you feel tempted to 'check in' with them, deposit your message in the Safety Vault. If you're thinking about the future, review your Needs Navigator list."
+      return { tool: "needs", text: "If you're thinking about 'what next', open Needs Navigator." }
     }
   }
 
+  const dayGuidance = getDayGuidance()
+
+  const getBehaviorReflection = () => {
+    if (vaultEntries.length > 0) {
+      return "You've chosen to park messages instead of sending them. That's pause over panic."
+    }
+    if (usageStats.panicModeUses > 0) {
+      return "You've used the breathing tool to ride out tough moments. That's your nervous system learning."
+    }
+    if (userNeeds.filter((n) => n.isCore).length > 0) {
+      return "You've started mapping your non-negotiables. That's clarity you'll carry forward."
+    }
+    return null
+  }
+
+  const behaviorReflection = getBehaviorReflection()
+
   return (
-    <div className="min-h-screen pb-24">
+    <motion.div className="min-h-screen pb-24" {...screenTransition}>
       <div className="px-6 py-8">
         {/* Header */}
         <motion.div
@@ -52,23 +78,59 @@ export function MainDashboard({ onOpenSubView }: MainDashboardProps) {
           </div>
         </motion.div>
 
+        {currentDay === 1 && (
+          <motion.div
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="mb-6 p-4 rounded-xl bg-pivot-heart-burgundy/20 border border-pivot-heart-burgundy/40"
+          >
+            <div className="flex items-start gap-3">
+              <AlertCircle className="w-5 h-5 text-pivot-heart-burgundy flex-shrink-0 mt-0.5" />
+              <div>
+                <h3 className="font-semibold text-foreground mb-1">Day 1: System Shock</h3>
+                <p className="text-sm text-foreground/80">
+                  Don't decide anything today. Just follow the steps and let your system catch up.
+                </p>
+              </div>
+            </div>
+          </motion.div>
+        )}
+
+        {currentDay === duration && (
+          <motion.div
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="mb-6 p-4 rounded-xl bg-pivot-clarity-cyan/20 border border-pivot-clarity-cyan/40"
+          >
+            <div className="flex items-start gap-3">
+              <Sparkles className="w-5 h-5 text-pivot-clarity-cyan flex-shrink-0 mt-0.5" />
+              <div>
+                <h3 className="font-semibold text-foreground mb-1">Day {duration}: Decision Day</h3>
+                <p className="text-sm text-foreground/80">
+                  Review the last {duration === 14 ? "2 weeks" : "30 days"}. You're choosing from clarity now, not
+                  panic.
+                </p>
+              </div>
+            </div>
+          </motion.div>
+        )}
+
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 0.05 }}
-          className="mb-6 p-5 rounded-xl bg-pivot-logic-blue/10 border border-pivot-logic-blue/30"
+          className="mb-8 p-5 rounded-xl bg-pivot-logic-blue/10 border border-pivot-logic-blue/30"
         >
           <div className="flex items-center gap-2 mb-3">
             <Lightbulb className="w-5 h-5 text-pivot-logic-blue" />
             <h2 className="text-lg font-semibold text-foreground">Today, start here</h2>
           </div>
-          <p className="text-base text-foreground/90 leading-relaxed mb-4">
-            1) Read today's anchor. 2) Answer the check-in. 3) Then choose the tool that matches how you feel.
+          <p className="text-base text-foreground/90 leading-relaxed mb-3">
+            1) Read today's anchor. 2) Do the check-in. 3) Use one tool if needed.
           </p>
           <div className="p-3 rounded-lg bg-pivot-slate-900/50 border border-pivot-slate-800">
-            <p className="text-sm text-muted-foreground leading-relaxed">
-              <span className="text-pivot-clarity-cyan font-medium">Day {currentDay} suggestion:</span>{" "}
-              {getDayGuidance()}
+            <p className="text-sm text-foreground/90">
+              <span className="text-pivot-clarity-cyan font-medium">Day {currentDay}:</span> {dayGuidance.text}
             </p>
           </div>
         </motion.div>
@@ -78,7 +140,7 @@ export function MainDashboard({ onOpenSubView }: MainDashboardProps) {
           initial={{ opacity: 0, scale: 0.9 }}
           animate={{ opacity: 1, scale: 1 }}
           transition={{ delay: 0.1 }}
-          className="flex flex-col items-center mb-6"
+          className="flex flex-col items-center mb-8"
         >
           <ClarityClock />
           <div className="mt-3 px-4 py-2 rounded-full bg-pivot-logic-blue/10 border border-pivot-logic-blue/20">
@@ -91,14 +153,17 @@ export function MainDashboard({ onOpenSubView }: MainDashboardProps) {
 
         {/* Daily Check-in Prompt */}
         {!todayCheckIn && (
-          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }}>
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.2 }}
+            className="mb-8"
+          >
             <h3 className="text-lg font-semibold text-foreground mb-2">Daily Check-in</h3>
-            <p className="text-base text-foreground/80 mb-3">
-              Start here each day: read today's anchor, then respond to the check-in.
-            </p>
+            <p className="text-sm text-muted-foreground mb-3">Track your state. Takes 30 seconds.</p>
             <PivotCard
               variant="logic"
-              className="p-4 mb-4 cursor-pointer"
+              className="p-4 cursor-pointer cta-button"
               onClick={() => onOpenSubView("checkin")}
               glow
             >
@@ -108,7 +173,7 @@ export function MainDashboard({ onOpenSubView }: MainDashboardProps) {
                 </div>
                 <div>
                   <h3 className="font-medium text-foreground">Open Check-in</h3>
-                  <p className="text-muted-foreground text-sm">Track your state. No judgment.</p>
+                  <p className="text-muted-foreground text-sm">No judgment, just data.</p>
                 </div>
               </div>
             </PivotCard>
@@ -120,7 +185,7 @@ export function MainDashboard({ onOpenSubView }: MainDashboardProps) {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.2 }}
-            className="mb-4"
+            className="mb-8"
           >
             <PivotCard className="p-4" hover={false}>
               <div className="flex items-center justify-between">
@@ -138,9 +203,14 @@ export function MainDashboard({ onOpenSubView }: MainDashboardProps) {
         )}
 
         {/* Daily Anchor */}
-        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.3 }}>
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.3 }}
+          className="mb-10"
+        >
           <h3 className="text-lg font-semibold text-foreground mb-2">Today's Anchor</h3>
-          <p className="text-base text-foreground/80 mb-3">A grounding thought for today. Read it, sit with it.</p>
+          <p className="text-sm text-muted-foreground mb-3">Read it. Sit with it.</p>
           <DailyAnchorCard dayNumber={currentDay} />
         </motion.div>
 
@@ -148,30 +218,64 @@ export function MainDashboard({ onOpenSubView }: MainDashboardProps) {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.4 }}
-          className="mt-8"
+          className="mt-10"
         >
           <h3 className="text-lg font-semibold text-foreground mb-2">Your Toolkit</h3>
-          <p className="text-base text-foreground/80 mb-4">
-            Tap any tool below when you need it. Each one helps with a different feeling.
-          </p>
+          <p className="text-sm text-muted-foreground mb-4">Tap when you need it.</p>
           <div className="grid grid-cols-2 gap-3">
-            <PivotCard variant="logic" className="p-4 cursor-pointer" onClick={() => onOpenSubView("vault")}>
-              <Lock className="w-5 h-5 text-pivot-logic-blue mb-2" />
-              <p className="font-medium text-foreground text-sm">Safety Vault</p>
-              <p className="text-xs text-muted-foreground mt-1">When you want to text them</p>
-            </PivotCard>
+            <div className="relative">
+              {dayGuidance.tool === "vault" && (
+                <span className="absolute -top-2 left-2 px-2 py-0.5 text-[10px] font-medium bg-pivot-logic-blue text-white rounded-full z-10">
+                  Recommended
+                </span>
+              )}
+              <PivotCard
+                variant="logic"
+                className={`p-4 cursor-pointer h-full ${dayGuidance.tool === "vault" ? "border-pivot-logic-blue" : ""}`}
+                onClick={() => onOpenSubView("vault")}
+                glow={dayGuidance.tool === "vault"}
+              >
+                <Lock className="w-5 h-5 text-pivot-logic-blue mb-2" />
+                <p className="font-medium text-foreground text-sm">Safety Vault</p>
+                <p className="text-xs text-muted-foreground mt-1">When you want to text them</p>
+              </PivotCard>
+            </div>
 
-            <PivotCard variant="clarity" className="p-4 cursor-pointer" onClick={() => onOpenSubView("patterns")}>
-              <Brain className="w-5 h-5 text-[#00f5ff] mb-2" />
-              <p className="font-medium text-foreground text-sm">Patterns</p>
-              <p className="text-xs text-muted-foreground mt-1">When their behavior confuses you</p>
-            </PivotCard>
+            <div className="relative">
+              {dayGuidance.tool === "patterns" && (
+                <span className="absolute -top-2 left-2 px-2 py-0.5 text-[10px] font-medium bg-pivot-clarity-cyan text-slate-900 rounded-full z-10">
+                  Recommended
+                </span>
+              )}
+              <PivotCard
+                variant="clarity"
+                className={`p-4 cursor-pointer h-full ${dayGuidance.tool === "patterns" ? "border-pivot-clarity-cyan" : ""}`}
+                onClick={() => onOpenSubView("patterns")}
+                glow={dayGuidance.tool === "patterns"}
+              >
+                <Brain className="w-5 h-5 text-[#00f5ff] mb-2" />
+                <p className="font-medium text-foreground text-sm">Patterns</p>
+                <p className="text-xs text-muted-foreground mt-1">When their behavior confuses you</p>
+              </PivotCard>
+            </div>
 
-            <PivotCard variant="default" className="p-4 cursor-pointer" onClick={() => onOpenSubView("needs")}>
-              <Compass className="w-5 h-5 text-pivot-warm-amber mb-2" />
-              <p className="font-medium text-foreground text-sm">Needs Navigator</p>
-              <p className="text-xs text-muted-foreground mt-1">When you're thinking "what next"</p>
-            </PivotCard>
+            <div className="relative">
+              {dayGuidance.tool === "needs" && (
+                <span className="absolute -top-2 left-2 px-2 py-0.5 text-[10px] font-medium bg-pivot-warm-amber text-slate-900 rounded-full z-10">
+                  Recommended
+                </span>
+              )}
+              <PivotCard
+                variant="default"
+                className={`p-4 cursor-pointer h-full ${dayGuidance.tool === "needs" ? "border-pivot-warm-amber" : ""}`}
+                onClick={() => onOpenSubView("needs")}
+                glow={dayGuidance.tool === "needs"}
+              >
+                <Compass className="w-5 h-5 text-pivot-warm-amber mb-2" />
+                <p className="font-medium text-foreground text-sm">Needs Navigator</p>
+                <p className="text-xs text-muted-foreground mt-1">When you're thinking "what next"</p>
+              </PivotCard>
+            </div>
 
             <PivotCard variant="heart" className="p-4 cursor-pointer" onClick={() => onOpenSubView("boundaries")}>
               <Shield className="w-5 h-5 text-pivot-heart-burgundy mb-2" />
@@ -181,18 +285,29 @@ export function MainDashboard({ onOpenSubView }: MainDashboardProps) {
           </div>
         </motion.div>
 
+        {behaviorReflection && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.5 }}
+            className="mt-8 p-4 rounded-xl bg-pivot-slate-900/50 border border-pivot-slate-800"
+          >
+            <p className="text-sm text-pivot-clarity-cyan/80 leading-relaxed text-center">{behaviorReflection}</p>
+          </motion.div>
+        )}
+
         {/* Footer Message */}
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
-          transition={{ delay: 0.5 }}
-          className="mt-8 p-4 rounded-xl bg-pivot-slate-900/50 border border-pivot-slate-800"
+          transition={{ delay: 0.6 }}
+          className="mt-6 p-4 rounded-xl bg-pivot-slate-900/30"
         >
           <p className="text-sm text-muted-foreground leading-relaxed text-center italic">
             "The urge will pass. You are still on solid ground."
           </p>
         </motion.div>
       </div>
-    </div>
+    </motion.div>
   )
 }

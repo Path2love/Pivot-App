@@ -192,3 +192,29 @@
 .animate-glow-pulse {
   animation: glow-pulse 2s ease-in-out infinite;
 }
+
+/* Add CTA button hover effect class */
+.cta-button {
+  transition: transform 0.2s ease-out, box-shadow 0.2s ease-out;
+}
+
+.cta-button:hover {
+  transform: scale(1.02);
+  box-shadow: 0 0 20px rgba(0, 245, 255, 0.4);
+}
+
+/* Screen transition wrapper */
+.screen-enter {
+  animation: screenFadeUp 0.25s ease-out forwards;
+}
+
+@keyframes screenFadeUp {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}

@@ -71,6 +71,13 @@ export interface VaultEntry {
   reflectionQuestions: string[]
 }
 
+export interface UsageStats {
+  vaultDeposits: number
+  panicModeUses: number
+  needsAdded: number
+  patternsViewed: number
+}
+
 const STORAGE_KEYS = {
   PROFILE: "pivot_user_profile",
   JOURNAL: "pivot_journal_entries",
@@ -79,6 +86,8 @@ const STORAGE_KEYS = {
   BOUNDARIES: "pivot_boundaries",
   VAULT: "pivot_vault_entries",
 }
+
+const USAGE_KEY = "pivot_usage_stats"
 
 export function getUserProfile(): UserProfile {
   if (typeof window === "undefined") return {}
@@ -130,6 +139,7 @@ export function saveUserNeed(need: NeedItem): void {
   const needs = getUserNeeds()
   needs.push(need)
   localStorage.setItem(STORAGE_KEYS.NEEDS, JSON.stringify(needs))
+  incrementUsageStat("needsAdded")
 }
 
 export function updateUserNeeds(needs: NeedItem[]): void {
@@ -161,6 +171,7 @@ export function saveVaultEntry(entry: VaultEntry): void {
   const entries = getVaultEntries()
   entries.unshift(entry)
   localStorage.setItem(STORAGE_KEYS.VAULT, JSON.stringify(entries))
+  incrementUsageStat("vaultDeposits")
 }
 
 export function getClarityDaysRemaining(): number {
@@ -195,4 +206,18 @@ export function getClarityProgress(): number {
 export function resetAllData(): void {
   if (typeof window === "undefined") return
   Object.values(STORAGE_KEYS).forEach((key) => localStorage.removeItem(key))
+  localStorage.removeItem(USAGE_KEY)
+}
+
+export function getUsageStats(): UsageStats {
+  if (typeof window === "undefined") return { vaultDeposits: 0, panicModeUses: 0, needsAdded: 0, patternsViewed: 0 }
+  const stored = localStorage.getItem(USAGE_KEY)
+  return stored ? JSON.parse(stored) : { vaultDeposits: 0, panicModeUses: 0, needsAdded: 0, patternsViewed: 0 }
+}
+
+export function incrementUsageStat(stat: keyof UsageStats): void {
+  if (typeof window === "undefined") return
+  const stats = getUsageStats()
+  stats[stat] = (stats[stat] || 0) + 1
+  localStorage.setItem(USAGE_KEY, JSON.stringify(stats))
 }

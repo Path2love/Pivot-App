@@ -4,11 +4,14 @@ import { useState } from "react"
 import { motion, AnimatePresence } from "framer-motion"
 import { ArrowLeft, Brain, ChevronDown, ChevronUp } from "lucide-react"
 import { PivotCard } from "@/components/ui/pivot-card"
+import { incrementUsageStat } from "@/lib/storage"
 
 interface PatternLibraryProps {
   onBack: () => void
   embedded?: boolean
 }
+
+// ... existing code for patterns array ...
 
 interface Pattern {
   id: string
@@ -99,15 +102,24 @@ const patterns: Pattern[] = [
   },
 ]
 
+const screenTransition = {
+  initial: { opacity: 0, y: 12 },
+  animate: { opacity: 1, y: 0 },
+  transition: { duration: 0.25, ease: "easeOut" },
+}
+
 export function PatternLibrary({ onBack, embedded = false }: PatternLibraryProps) {
   const [expandedId, setExpandedId] = useState<string | null>(null)
 
   const toggleExpand = (id: string) => {
     setExpandedId(expandedId === id ? null : id)
+    if (expandedId !== id) {
+      incrementUsageStat("patternsViewed")
+    }
   }
 
   return (
-    <div className={`min-h-screen ${embedded ? "pb-24" : "pb-8"}`}>
+    <motion.div className={`min-h-screen ${embedded ? "pb-24" : "pb-8"}`} {...screenTransition}>
       <div className="px-6 py-8">
         {/* Header */}
         <motion.div initial={{ opacity: 0, y: -20 }} animate={{ opacity: 1, y: 0 }} className="mb-6">
@@ -128,22 +140,10 @@ export function PatternLibrary({ onBack, embedded = false }: PatternLibraryProps
               <h2 className="font-serif text-2xl font-bold text-foreground">Pattern Library</h2>
             </div>
           </div>
-          <h3 className="text-lg font-semibold text-foreground mb-2">Use this when their behavior makes no sense.</h3>
-          <p className="text-base text-foreground/80 leading-relaxed">
-            Pick one pattern that feels familiar and read it. The goal is to see the system, not blame yourself.
-          </p>
-        </motion.div>
-
-        {/* Intro */}
-        <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.1 }}>
-          <PivotCard variant="clarity" className="p-5 mb-6" hover={false}>
-            <p className="text-base text-foreground/90 leading-relaxed mb-2">
-              These aren't diagnoses—they're simple explanations of common patterns.
-            </p>
-            <p className="text-base text-muted-foreground">
-              Tap any card below to learn why certain behaviors felt so confusing.
-            </p>
-          </PivotCard>
+          <h3 className="text-lg font-semibold text-foreground mb-1">
+            Use this when their behavior doesn't make sense.
+          </h3>
+          <p className="text-sm text-muted-foreground">Read one pattern at a time. Notice what matches.</p>
         </motion.div>
 
         {/* Pattern Cards */}
@@ -153,7 +153,7 @@ export function PatternLibrary({ onBack, embedded = false }: PatternLibraryProps
               key={pattern.id}
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.15 + index * 0.05 }}
+              transition={{ delay: 0.1 + index * 0.05 }}
             >
               <PivotCard className="overflow-hidden" hover={false}>
                 <button
@@ -185,12 +185,10 @@ export function PatternLibrary({ onBack, embedded = false }: PatternLibraryProps
                       transition={{ duration: 0.2 }}
                       className="px-5 pb-5"
                     >
-                      {/* Logic explanation */}
                       <div className="p-4 rounded-xl bg-pivot-logic-blue/10 border border-pivot-logic-blue/20 mb-4">
                         <p className="text-base text-foreground/90 leading-relaxed">{pattern.logic}</p>
                       </div>
 
-                      {/* Details */}
                       <div className="space-y-2">
                         {pattern.details.map((detail, i) => (
                           <div key={i} className="flex gap-3">
@@ -215,10 +213,10 @@ export function PatternLibrary({ onBack, embedded = false }: PatternLibraryProps
           className="mt-8 p-4 rounded-xl bg-pivot-slate-900/50 border border-pivot-slate-800"
         >
           <p className="text-sm text-muted-foreground leading-relaxed text-center italic">
-            "Your reaction isn't 'crazy'—it's biology. Understanding the pattern is the first step to breaking it."
+            "Your reaction isn't 'crazy'—it's biology."
           </p>
         </motion.div>
       </div>
-    </div>
+    </motion.div>
   )
 }

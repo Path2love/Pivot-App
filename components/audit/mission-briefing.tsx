@@ -10,12 +10,17 @@ interface MissionBriefingProps {
   onEnterDashboard: () => void
 }
 
+const screenTransition = {
+  initial: { opacity: 0, y: 12 },
+  animate: { opacity: 1, y: 0 },
+  transition: { duration: 0.25, ease: "easeOut" },
+}
+
 export function MissionBriefing({ onEnterDashboard }: MissionBriefingProps) {
   const profile = getUserProfile()
   const auditProfile = (profile.auditProfile || "integrated") as AuditProfile
   const profileInfo = profileDescriptions[auditProfile]
 
-  // Profile color mapping
   const profileColors: Record<AuditProfile, { primary: string; glow: string; bg: string }> = {
     integrated: {
       primary: "#00568f",
@@ -37,19 +42,19 @@ export function MissionBriefing({ onEnterDashboard }: MissionBriefingProps) {
   const colors = profileColors[auditProfile]
 
   return (
-    <div className="min-h-screen px-6 py-12 flex flex-col">
+    <motion.div className="min-h-screen px-6 py-12 flex flex-col" {...screenTransition}>
       <motion.p
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         className="text-center text-muted-foreground text-sm mb-4"
       >
-        You've finished the audit. Here's what it means and what happens next.
+        Audit complete. Here's what it means.
       </motion.p>
 
-      {/* Success Icon */}
       <motion.div
-        initial={{ opacity: 0, scale: 0.8 }}
-        animate={{ opacity: 1, scale: 1 }}
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.1, duration: 0.3 }}
         className="flex justify-center mb-8"
       >
         <div
@@ -63,25 +68,22 @@ export function MissionBriefing({ onEnterDashboard }: MissionBriefingProps) {
         </div>
       </motion.div>
 
-      {/* Headline */}
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.2 }}
+        transition={{ delay: 0.2, duration: 0.3 }}
         className="text-center mb-8"
       >
         <h1 className="font-serif text-3xl font-bold text-foreground mb-4">System Audit Complete.</h1>
         <p className="text-foreground/80 leading-relaxed max-w-md mx-auto">
-          The data is in. You've moved from emotional fog to structural clarity. You are no longer guessing; you are
-          witnessing.
+          You've moved from emotional fog to structural clarity.
         </p>
       </motion.div>
 
-      {/* Profile Result Card */}
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.4 }}
+        transition={{ delay: 0.35, duration: 0.3 }}
         className="mb-8"
       >
         <p className="text-center text-muted-foreground text-xs uppercase tracking-wider mb-4">Your Dynamic Profile</p>
@@ -105,33 +107,31 @@ export function MissionBriefing({ onEnterDashboard }: MissionBriefingProps) {
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.6 }}
+        transition={{ delay: 0.5 }}
         className="text-center mb-8 px-4"
       >
         <p className="text-foreground/90 leading-relaxed">
           Your <span className="font-semibold text-pivot-clarity-cyan">14-day Clarity Window</span> is now active.
         </p>
         <p className="text-muted-foreground text-sm mt-2 italic">
-          Your priority is not "fixing" the relationship—it is stabilizing your system.
+          Focus on stabilizing your system, not "fixing" the relationship.
         </p>
       </motion.div>
 
       <motion.div
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
-        transition={{ delay: 0.7 }}
+        transition={{ delay: 0.6 }}
         className="text-center mb-6"
       >
-        <p className="text-sm text-muted-foreground">
-          Next step: Tap 'Enter My Dashboard' to start your 14-day clarity window.
-        </p>
+        <p className="text-sm text-muted-foreground">Next: Tap below to start your 14-day window.</p>
       </motion.div>
 
       {/* CTA */}
-      <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.8 }} className="mt-auto">
+      <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.7 }} className="mt-auto">
         <Button
           onClick={onEnterDashboard}
-          className="w-full rounded-full py-6 text-white"
+          className="w-full rounded-full py-6 text-white cta-button"
           style={{
             backgroundColor: "#00568f",
             boxShadow: "0 0 20px rgba(0,245,255,0.3)",
@@ -141,6 +141,6 @@ export function MissionBriefing({ onEnterDashboard }: MissionBriefingProps) {
           <ArrowRight className="w-4 h-4 ml-2" />
         </Button>
       </motion.div>
-    </div>
+    </motion.div>
   )
 }

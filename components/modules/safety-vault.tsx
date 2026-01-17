@@ -6,10 +6,16 @@ import { ArrowLeft, Lock, Sparkles, Clock } from "lucide-react"
 import { PivotCard } from "@/components/ui/pivot-card"
 import { Button } from "@/components/ui/button"
 import { Textarea } from "@/components/ui/textarea"
-import { saveVaultEntry, getVaultEntries } from "@/lib/storage"
+import { saveVaultEntry, getVaultEntries, incrementUsageStat } from "@/lib/storage"
 
 interface SafetyVaultProps {
   onBack: () => void
+}
+
+const screenTransition = {
+  initial: { opacity: 0, y: 12 },
+  animate: { opacity: 1, y: 0 },
+  transition: { duration: 0.25, ease: "easeOut" },
 }
 
 export function SafetyVault({ onBack }: SafetyVaultProps) {
@@ -35,12 +41,14 @@ export function SafetyVault({ onBack }: SafetyVaultProps) {
       reflectionQuestions,
     })
 
+    incrementUsageStat("vaultDeposits")
+
     setText("")
     setShowResponse(true)
   }
 
   return (
-    <div className="min-h-screen pb-8">
+    <motion.div className="min-h-screen pb-8" {...screenTransition}>
       <div className="px-6 py-8">
         {/* Header */}
         <motion.div initial={{ opacity: 0, y: -20 }} animate={{ opacity: 1, y: 0 }} className="mb-6">
@@ -56,23 +64,14 @@ export function SafetyVault({ onBack }: SafetyVaultProps) {
               <h2 className="font-serif text-2xl font-bold text-foreground">Safety Vault</h2>
             </div>
           </div>
-          <h3 className="text-lg font-semibold text-foreground mb-2">Use this when you want to text them.</h3>
-          <p className="text-base text-foreground/80 leading-relaxed">
-            Paste or type the message you want to send. Deposit it here instead, then read the reality-check before
-            deciding.
+          <h3 className="text-lg font-semibold text-foreground mb-1">Use this when you're about to text them.</h3>
+          <p className="text-sm text-muted-foreground">
+            Paste your message, deposit it here, then read the reality-check.
           </p>
         </motion.div>
 
-        {/* Intro */}
         <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.1 }}>
-          <PivotCard variant="logic" className="p-5 mb-6" hover={false}>
-            <p className="text-base text-foreground/90 leading-relaxed mb-3">
-              <span className="font-semibold">Step 1:</span> Write the message you're tempted to send.
-            </p>
-            <p className="text-base text-foreground/90 leading-relaxed mb-3">
-              <span className="font-semibold">Step 2:</span> Deposit it instead of sending. The app will give you a
-              reality-check so you can decide later.
-            </p>
+          <PivotCard variant="logic" className="p-4 mb-6" hover={false}>
             <div className="flex items-center gap-2 text-pivot-clarity-cyan text-sm">
               <Clock className="w-4 h-4" />
               <span>Most urges pass within 20 minutes.</span>
@@ -91,7 +90,7 @@ export function SafetyVault({ onBack }: SafetyVaultProps) {
               className="space-y-4"
             >
               <div>
-                <label className="block text-base text-foreground/80 mb-2">What are you desperate to say?</label>
+                <label className="block text-sm text-foreground/80 mb-2">What do you want to say?</label>
                 <Textarea
                   placeholder="Type the message you're tempted to send..."
                   value={text}
@@ -99,11 +98,11 @@ export function SafetyVault({ onBack }: SafetyVaultProps) {
                   className="min-h-[180px] bg-pivot-slate-900/50 border-pivot-slate-800"
                 />
               </div>
-              <p className="text-sm text-muted-foreground text-center">You're not sending this. You're parking it.</p>
+              <p className="text-sm text-muted-foreground text-center">You're parking it, not sending it.</p>
               <Button
                 onClick={handleDeposit}
                 disabled={!text.trim()}
-                className="w-full rounded-full py-6 bg-pivot-logic-blue hover:bg-pivot-logic-blue/90 text-white glow-cyan-subtle"
+                className="w-full rounded-full py-6 bg-pivot-logic-blue hover:bg-pivot-logic-blue/90 text-white cta-button"
               >
                 <Lock className="w-4 h-4 mr-2" />
                 Deposit to Vault
@@ -127,7 +126,7 @@ export function SafetyVault({ onBack }: SafetyVaultProps) {
                   their own truth.
                 </p>
                 <p className="text-muted-foreground text-sm italic">
-                  Your message is locked. Come back in 24 hours if you still feel the need to send it.
+                  Come back in 24 hours if you still need to send it.
                 </p>
               </PivotCard>
 
@@ -150,7 +149,7 @@ export function SafetyVault({ onBack }: SafetyVaultProps) {
               className="flex items-center justify-between w-full text-sm text-muted-foreground mb-3"
             >
               <span>Vault History ({pastEntries.length})</span>
-              <span className="text-xs">{showPastEntries ? "Tap to hide" : "Tap to see"}</span>
+              <span className="text-xs">{showPastEntries ? "Hide" : "Show"}</span>
             </button>
 
             {showPastEntries && (
@@ -167,9 +166,9 @@ export function SafetyVault({ onBack }: SafetyVaultProps) {
                           {new Date(entry.timestamp).toLocaleDateString()}
                         </p>
                         {canRelease ? (
-                          <span className="text-xs text-pivot-clarity-cyan">24h passed - safe to review</span>
+                          <span className="text-xs text-pivot-clarity-cyan">24h passed</span>
                         ) : (
-                          <span className="text-xs text-muted-foreground">{24 - hoursAgo}h until review</span>
+                          <span className="text-xs text-muted-foreground">{24 - hoursAgo}h left</span>
                         )}
                       </div>
                     </PivotCard>
@@ -180,6 +179,6 @@ export function SafetyVault({ onBack }: SafetyVaultProps) {
           </motion.div>
         )}
       </div>
-    </div>
+    </motion.div>
   )
 }

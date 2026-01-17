@@ -7,11 +7,17 @@ import { PivotCard } from "@/components/ui/pivot-card"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { cn } from "@/lib/utils"
-import { getUserNeeds, saveUserNeed, updateUserNeeds, type NeedItem } from "@/lib/storage"
+import { getUserNeeds, saveUserNeed, updateUserNeeds, incrementUsageStat, type NeedItem } from "@/lib/storage"
 
 interface NeedsExplorerProps {
   onBack: () => void
   embedded?: boolean
+}
+
+const screenTransition = {
+  initial: { opacity: 0, y: 12 },
+  animate: { opacity: 1, y: 0 },
+  transition: { duration: 0.25, ease: "easeOut" },
 }
 
 const needsPrompts = [
@@ -20,15 +26,10 @@ const needsPrompts = [
     color: "text-pivot-logic-blue",
     bgColor: "bg-pivot-logic-blue/10",
     borderColor: "border-pivot-logic-blue/30",
-    prompts: [
-      "What makes you feel safe in a relationship?",
-      "What does consistency look like for you?",
-      "When have you felt most secure with someone?",
-    ],
+    prompts: ["What makes you feel safe in a relationship?", "What does consistency look like for you?"],
     examples: [
       "I need to feel like my partner won't disappear when things get hard",
       "I need reliability—knowing they'll follow through on what they say",
-      "I need to feel like I can be imperfect and still be accepted",
     ],
   },
   {
@@ -36,15 +37,10 @@ const needsPrompts = [
     color: "text-pivot-heart-burgundy",
     bgColor: "bg-pivot-heart-burgundy/10",
     borderColor: "border-pivot-heart-burgundy/30",
-    prompts: [
-      "What kind of communication helps you feel connected?",
-      "How do you need conflict to be handled?",
-      "What does feeling heard look like for you?",
-    ],
+    prompts: ["What kind of communication helps you feel connected?", "How do you need conflict to be handled?"],
     examples: [
       "I need someone who can talk about hard things without shutting down",
       "I need to be able to express concerns without fear of punishment",
-      "I need regular check-ins about how we're both doing",
     ],
   },
   {
@@ -52,15 +48,10 @@ const needsPrompts = [
     color: "text-pivot-clarity-cyan",
     bgColor: "bg-pivot-clarity-cyan/10",
     borderColor: "border-pivot-clarity-cyan/30",
-    prompts: [
-      "What does quality time mean to you?",
-      "How do you know someone is truly present with you?",
-      "What kind of attention nourishes you?",
-    ],
+    prompts: ["What does quality time mean to you?", "How do you know someone is truly present with you?"],
     examples: [
       "I need undivided attention sometimes—phones away, just us",
       "I need someone who notices when something is off with me",
-      "I need a partner who is curious about my inner world",
     ],
   },
   {
@@ -68,14 +59,9 @@ const needsPrompts = [
     color: "text-pivot-logic-blue",
     bgColor: "bg-pivot-logic-blue/10",
     borderColor: "border-pivot-logic-blue/30",
-    prompts: [
-      "How important is it to be included in your partner's life?",
-      "What role do you want to play in their world?",
-      "How do you feel about being introduced to important people?",
-    ],
+    prompts: ["How important is it to be included in your partner's life?"],
     examples: [
       "I need to be part of my partner's broader life, not kept separate",
-      "I need to know their friends and family, and for them to know me",
       "I need our relationship to be acknowledged, not hidden",
     ],
   },
@@ -84,15 +70,10 @@ const needsPrompts = [
     color: "text-pivot-heart-burgundy",
     bgColor: "bg-pivot-heart-burgundy/10",
     borderColor: "border-pivot-heart-burgundy/30",
-    prompts: [
-      "What kind of support do you need when you're struggling?",
-      "How do you want to grow together with a partner?",
-      "What does encouragement look like for you?",
-    ],
+    prompts: ["What kind of support do you need when you're struggling?"],
     examples: [
       "I need a partner who celebrates my wins and supports my dreams",
       "I need someone willing to work on themselves and the relationship",
-      "I need space to be my own person while also being part of a 'we'",
     ],
   },
 ]
@@ -113,6 +94,7 @@ export function NeedsExplorer({ onBack, embedded = false }: NeedsExplorerProps) 
       createdAt: new Date().toISOString(),
     }
     saveUserNeed(need)
+    incrementUsageStat("needsAdded")
     setUserNeeds((prev) => [...prev, need])
     setNewNeed("")
   }
@@ -133,7 +115,7 @@ export function NeedsExplorer({ onBack, embedded = false }: NeedsExplorerProps) 
   const otherNeeds = userNeeds.filter((n) => !n.isCore)
 
   return (
-    <div className={cn("min-h-screen", embedded ? "pb-24" : "pb-8")}>
+    <motion.div className={cn("min-h-screen", embedded ? "pb-24" : "pb-8")} {...screenTransition}>
       <div className="px-6 py-8">
         <motion.div initial={{ opacity: 0, y: -20 }} animate={{ opacity: 1, y: 0 }} className="mb-6">
           {!embedded && (
@@ -153,33 +135,19 @@ export function NeedsExplorer({ onBack, embedded = false }: NeedsExplorerProps) 
               <h2 className="font-serif text-2xl font-bold text-foreground">Needs Navigator</h2>
             </div>
           </div>
-          <h3 className="text-lg font-semibold text-foreground mb-2">
+          <h3 className="text-lg font-semibold text-foreground mb-1">
             Use this when you're thinking about "what next."
           </h3>
-          <p className="text-base text-foreground/80 leading-relaxed">
-            List and reorder what you need from any partner. Use this to decide what has to change if this continues or
-            if you reconnect.
-          </p>
-        </motion.div>
-
-        <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.1 }}>
-          <PivotCard variant="heart" className="p-4 mb-6" hover={false}>
-            <p className="text-base text-foreground/90 leading-relaxed mb-2">
-              Tap the checkbox next to any need to mark it as "core" (your non-negotiables).
-            </p>
-            <p className="text-base text-muted-foreground">
-              These are the things you will not compromise on in any relationship.
-            </p>
-          </PivotCard>
+          <p className="text-sm text-muted-foreground">List what you need. Mark your non-negotiables as "core."</p>
         </motion.div>
 
         {/* Discovery Prompts */}
         {showPrompts && (
           <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.2 }} className="mb-8">
             <div className="flex items-center justify-between mb-4">
-              <h3 className="text-lg font-semibold text-foreground">Explore by category</h3>
+              <h3 className="text-base font-semibold text-foreground">Explore by category</h3>
               <button onClick={() => setShowPrompts(false)} className="text-xs text-muted-foreground hover:underline">
-                Hide prompts
+                Hide
               </button>
             </div>
 
@@ -196,8 +164,8 @@ export function NeedsExplorer({ onBack, embedded = false }: NeedsExplorerProps) 
                     }
                   >
                     <div className="flex items-center justify-between">
-                      <span className={cn("font-medium text-base", category.color)}>{category.category}</span>
-                      <span className="text-xs text-muted-foreground">Tap to explore</span>
+                      <span className={cn("font-medium text-sm", category.color)}>{category.category}</span>
+                      <span className="text-xs text-muted-foreground">Tap</span>
                     </div>
                   </PivotCard>
 
@@ -207,22 +175,13 @@ export function NeedsExplorer({ onBack, embedded = false }: NeedsExplorerProps) 
                       animate={{ opacity: 1, height: "auto" }}
                       className="mt-3 space-y-3 pl-4"
                     >
-                      <div className={cn("p-3 rounded-lg", category.bgColor)}>
-                        <p className="text-sm text-muted-foreground mb-2">Questions to consider:</p>
-                        {category.prompts.map((prompt, i) => (
-                          <p key={i} className="text-base text-foreground/70 mb-1">
-                            • {prompt}
-                          </p>
-                        ))}
-                      </div>
-
                       <div className="p-3 rounded-lg bg-pivot-slate-900/50">
-                        <p className="text-sm text-muted-foreground mb-2">Example needs (tap to add):</p>
+                        <p className="text-xs text-muted-foreground mb-2">Tap to add:</p>
                         {category.examples.map((example, i) => (
                           <button
                             key={i}
                             onClick={() => handleAddNeed(example, category.category)}
-                            className="block w-full text-left text-base text-foreground/70 mb-2 hover:text-pivot-clarity-cyan transition-colors"
+                            className="block w-full text-left text-sm text-foreground/70 mb-2 hover:text-pivot-clarity-cyan transition-colors"
                           >
                             + "{example}"
                           </button>
@@ -234,7 +193,7 @@ export function NeedsExplorer({ onBack, embedded = false }: NeedsExplorerProps) 
                           placeholder="Write your own..."
                           value={newNeed}
                           onChange={(e) => setNewNeed(e.target.value)}
-                          className="bg-pivot-slate-900/50 border-pivot-slate-800 text-base"
+                          className="bg-pivot-slate-900/50 border-pivot-slate-800 text-sm"
                           onKeyDown={(e) => {
                             if (e.key === "Enter") {
                               handleAddNeed(newNeed, category.category)
@@ -261,14 +220,14 @@ export function NeedsExplorer({ onBack, embedded = false }: NeedsExplorerProps) 
         {!showPrompts && (
           <Button variant="outline" onClick={() => setShowPrompts(true)} className="mb-6 w-full border-pivot-slate-800">
             <Lightbulb className="w-4 h-4 mr-2" />
-            Show discovery prompts
+            Show prompts
           </Button>
         )}
 
         {/* Core Needs */}
         {coreNeeds.length > 0 && (
           <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="mb-6">
-            <h3 className="text-lg font-semibold text-foreground mb-3 flex items-center gap-2">
+            <h3 className="text-base font-semibold text-foreground mb-3 flex items-center gap-2">
               <Heart className="w-4 h-4 text-pivot-heart-burgundy" />
               Core Non-Negotiables ({coreNeeds.length})
             </h3>
@@ -279,7 +238,7 @@ export function NeedsExplorer({ onBack, embedded = false }: NeedsExplorerProps) 
                     <Check className="w-4 h-4 text-pivot-heart-burgundy" />
                   </button>
                   <div className="flex-1">
-                    <p className="text-base text-foreground">{need.text}</p>
+                    <p className="text-sm text-foreground">{need.text}</p>
                     <p className="text-xs text-muted-foreground mt-1">{need.category}</p>
                   </div>
                   <button
@@ -297,8 +256,8 @@ export function NeedsExplorer({ onBack, embedded = false }: NeedsExplorerProps) 
         {/* Other Needs */}
         {otherNeeds.length > 0 && (
           <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
-            <h3 className="text-lg font-semibold text-foreground mb-2">All Needs ({otherNeeds.length})</h3>
-            <p className="text-base text-foreground/80 mb-3">Tap the checkbox to mark as core</p>
+            <h3 className="text-base font-semibold text-foreground mb-2">All Needs ({otherNeeds.length})</h3>
+            <p className="text-xs text-muted-foreground mb-3">Tap checkbox to mark as core</p>
             <div className="space-y-2">
               {otherNeeds.map((need) => (
                 <PivotCard key={need.id} className="p-3 flex items-start gap-3" hover={false}>
@@ -307,7 +266,7 @@ export function NeedsExplorer({ onBack, embedded = false }: NeedsExplorerProps) 
                     className="mt-0.5 w-4 h-4 rounded border border-muted-foreground/30 hover:border-pivot-heart-burgundy"
                   />
                   <div className="flex-1">
-                    <p className="text-base text-foreground/80">{need.text}</p>
+                    <p className="text-sm text-foreground/80">{need.text}</p>
                     <p className="text-xs text-muted-foreground mt-1">{need.category}</p>
                   </div>
                   <button
@@ -324,10 +283,10 @@ export function NeedsExplorer({ onBack, embedded = false }: NeedsExplorerProps) 
 
         {userNeeds.length === 0 && !showPrompts && (
           <div className="text-center py-12">
-            <p className="text-muted-foreground">No needs added yet. Use the prompts above to discover yours.</p>
+            <p className="text-muted-foreground text-sm">No needs yet. Use the prompts to discover yours.</p>
           </div>
         )}
       </div>
-    </div>
+    </motion.div>
   )
 }

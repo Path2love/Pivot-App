@@ -16,6 +16,12 @@ interface HeroHomeProps {
 
 type StatusPath = "limbo" | "shutdown" | "post-breakup"
 
+const screenTransition = {
+  initial: { opacity: 0, y: 12 },
+  animate: { opacity: 1, y: 0 },
+  transition: { duration: 0.25, ease: "easeOut" },
+}
+
 const statusPaths: {
   id: StatusPath
   title: string
@@ -46,32 +52,27 @@ const howItWorksSteps = [
   {
     step: 1,
     title: "The Status Check",
-    description:
-      "You will tell us where you are. We begin by identifying your current location (Limbo, Shutdown, or Post-Breakup) so the system can calibrate to your specific nervous system state.",
+    description: "You tell us where you are so the system can calibrate to your nervous system state.",
   },
   {
     step: 2,
     title: "The System Audit",
-    description:
-      "You will answer 10 short questions. This isn't about 'feelings'—it's an engineering report on the reliability of your relationship's architecture.",
+    description: "You answer 10 short questions—an engineering report on your relationship's reliability.",
   },
   {
     step: 3,
     title: "The Profile",
-    description:
-      "You will see what kind of system you were in. We categorize the connection as an Integrated System, a Compartmentalized System, or a Shutdown Cycle to remove the mystery of 'what happened'.",
+    description: "You see what kind of system you were in: Integrated, Compartmentalized, or Shutdown.",
   },
   {
     step: 4,
     title: "The 14-Day Reset",
-    description:
-      "You will get a 14-day plan. A science-backed window to stabilize your neurochemistry with a daily 'Logic Anchor' to counter 'Heart Panic'.",
+    description: "You get a science-backed window to stabilize your neurochemistry with daily anchors.",
   },
   {
     step: 5,
     title: "The Toolkit",
-    description:
-      "You will use tools to stay steady. Access to the Safety Vault (for dopamine cravings), Pattern Recognition (to stop self-blame), and Somatic Panic Mode (to ground your body).",
+    description: "You access tools to stay steady: Safety Vault, Pattern Library, and Somatic Panic Mode.",
   },
 ]
 
@@ -101,7 +102,7 @@ export function HeroHome({ onStatusSelect, onStartJourney }: HeroHomeProps) {
   }
 
   return (
-    <div className="min-h-screen px-6 py-12 flex flex-col">
+    <motion.div className="min-h-screen px-6 py-12 flex flex-col" {...screenTransition}>
       {/* Hero Section */}
       <motion.div
         initial={{ opacity: 0, y: 20 }}
@@ -163,7 +164,7 @@ export function HeroHome({ onStatusSelect, onStartJourney }: HeroHomeProps) {
       >
         <h2 className="text-center text-lg font-medium text-foreground mb-2">Where are you right now?</h2>
         <p className="text-center text-sm text-muted-foreground mb-6">
-          Step 1: Tap the card that best matches your situation.
+          Step 1: Tap the card that matches your situation.
         </p>
 
         <div className="space-y-3">
@@ -206,7 +207,7 @@ export function HeroHome({ onStatusSelect, onStartJourney }: HeroHomeProps) {
         </div>
       </motion.div>
 
-      {/* What You'll Get */}
+      {/* What You'll Get - simplified */}
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
@@ -216,7 +217,6 @@ export function HeroHome({ onStatusSelect, onStartJourney }: HeroHomeProps) {
         <p className="text-center text-muted-foreground text-xs uppercase tracking-wider mb-6">What You'll Get</p>
 
         <div className="space-y-5 px-2">
-          {/* Safety Vault */}
           <div className="flex items-start gap-3">
             <Lock className="w-5 h-5 text-pivot-logic-blue flex-shrink-0 mt-0.5" />
             <div>
@@ -227,26 +227,23 @@ export function HeroHome({ onStatusSelect, onStartJourney }: HeroHomeProps) {
             </div>
           </div>
 
-          {/* Clarity Clock */}
           <div className="flex items-start gap-3">
             <Clock className="w-5 h-5 text-pivot-heart-burgundy flex-shrink-0 mt-0.5" />
             <div>
               <h4 className="text-sm font-semibold text-foreground mb-1">The Clarity Clock</h4>
               <p className="text-muted-foreground text-sm leading-relaxed">
-                A 14-day reset window... your nervous system needs space to stop treating this person like a threat or a
+                A 14-day reset window. Your nervous system needs space to stop treating this person like a threat or
                 savior.
               </p>
             </div>
           </div>
 
-          {/* Pattern Recognition */}
           <div className="flex items-start gap-3">
             <Brain className="w-5 h-5 text-pivot-clarity-cyan flex-shrink-0 mt-0.5" />
             <div>
               <h4 className="text-sm font-semibold text-foreground mb-1">Pattern Recognition</h4>
               <p className="text-muted-foreground text-sm leading-relaxed">
-                Short, clear explanations for why closeness can feel dangerous... why your reaction isn't "crazy"—it's
-                biology.
+                Clear explanations for why your reaction isn't "crazy"—it's biology.
               </p>
             </div>
           </div>
@@ -264,12 +261,12 @@ export function HeroHome({ onStatusSelect, onStartJourney }: HeroHomeProps) {
           "This isn't about getting them back. It's about getting YOU back."
         </p>
 
-        <p className="text-center text-xs text-muted-foreground">Step 2: When you're ready, start the System Audit.</p>
+        <p className="text-center text-xs text-muted-foreground">Step 2: When ready, start the System Audit.</p>
 
         <Button
           onClick={handleStart}
           disabled={!selectedStatus}
-          className="w-full rounded-full py-6 bg-pivot-logic-blue hover:bg-pivot-logic-blue/90 text-white glow-cyan-subtle disabled:opacity-50 disabled:cursor-not-allowed"
+          className="w-full rounded-full py-6 bg-pivot-logic-blue hover:bg-pivot-logic-blue/90 text-white cta-button disabled:opacity-50 disabled:cursor-not-allowed"
         >
           Start Your Clarity Journey
           <ArrowRight className="w-4 h-4 ml-2" />
@@ -282,7 +279,7 @@ export function HeroHome({ onStatusSelect, onStartJourney }: HeroHomeProps) {
         >
           See How It Works
         </Button>
-        <p className="text-center text-xs text-muted-foreground">Not sure yet? Tap here for a quick overview.</p>
+        <p className="text-center text-xs text-muted-foreground">Not sure yet? Tap for a quick overview.</p>
       </motion.div>
 
       {/* Footer */}
@@ -292,8 +289,7 @@ export function HeroHome({ onStatusSelect, onStartJourney }: HeroHomeProps) {
         transition={{ delay: 0.8 }}
         className="text-center text-muted-foreground/60 text-xs mt-8"
       >
-        Built for everyone. All genders, all identities, all relationship structures, all versions of love. Grounded in
-        logic; open to all.
+        Built for everyone. All genders, all identities, all relationship structures.
       </motion.p>
 
       {/* How It Works Modal */}
@@ -304,7 +300,12 @@ export function HeroHome({ onStatusSelect, onStartJourney }: HeroHomeProps) {
           exit={{ opacity: 0 }}
           className="fixed inset-0 bg-background/95 backdrop-blur-sm z-50 overflow-y-auto"
         >
-          <div className="min-h-screen px-6 py-12">
+          <motion.div
+            className="min-h-screen px-6 py-12"
+            initial={{ opacity: 0, y: 12 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.25, ease: "easeOut" }}
+          >
             <div className="max-w-lg mx-auto">
               <div className="flex items-center justify-between mb-4">
                 <h2 className="font-serif text-2xl font-bold text-foreground">How It Works</h2>
@@ -316,9 +317,7 @@ export function HeroHome({ onStatusSelect, onStartJourney }: HeroHomeProps) {
                 </button>
               </div>
 
-              <p className="text-muted-foreground text-sm mb-8">
-                In 5 steps, here's exactly what this app will do with you.
-              </p>
+              <p className="text-muted-foreground text-sm mb-8">In 5 steps, here's what this app will do with you.</p>
 
               <div className="space-y-4">
                 {howItWorksSteps.map((item, index) => (
@@ -345,14 +344,14 @@ export function HeroHome({ onStatusSelect, onStartJourney }: HeroHomeProps) {
 
               <Button
                 onClick={() => setShowHowItWorks(false)}
-                className="w-full rounded-full py-6 mt-8 bg-pivot-logic-blue hover:bg-pivot-logic-blue/90 text-white"
+                className="w-full rounded-full py-6 mt-8 bg-pivot-logic-blue hover:bg-pivot-logic-blue/90 text-white cta-button"
               >
                 Got It
               </Button>
             </div>
-          </div>
+          </motion.div>
         </motion.div>
       )}
-    </div>
+    </motion.div>
   )
 }
