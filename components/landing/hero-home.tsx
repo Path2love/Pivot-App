@@ -156,13 +156,16 @@ export function HeroHome({ onStatusSelect, onStartJourney }: HeroHomeProps) {
   }
 
   const handleStatusSelect = (status: StatusPath) => {
+    console.log("[v0] Selected status:", status)
     setSelectedStatus(status)
     saveUserProfile({ statusPath: status })
     onStatusSelect(status)
   }
 
   const handleStart = () => {
+    console.log("[v0] handleStart called, selectedStatus:", selectedStatus)
     if (selectedStatus) {
+      console.log("[v0] Setting showPaywall to true")
       setShowPaywall(true)
     }
   }
@@ -348,7 +351,10 @@ export function HeroHome({ onStatusSelect, onStartJourney }: HeroHomeProps) {
           className="space-y-4 max-w-md mx-auto w-full"
         >
           <Button
-            onClick={handleStart}
+            onClick={() => {
+              console.log("[v0] Button clicked, disabled:", !selectedStatus, "selectedStatus:", selectedStatus)
+              handleStart()
+            }}
             disabled={!selectedStatus}
             size="lg"
             className="w-full rounded-full py-7 text-lg bg-pivot-clarity-cyan hover:bg-pivot-clarity-cyan/90 text-background font-semibold cta-button disabled:opacity-50 disabled:cursor-not-allowed shadow-[0_0_40px_rgba(0,245,255,0.3)]"
