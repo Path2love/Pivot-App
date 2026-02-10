@@ -134,9 +134,9 @@ const pricingPlans = [
 ]
 
 const trustIndicators = [
-  { number: "10,000+", label: "People finding clarity" },
-  { number: "94%", label: "Report feeling more grounded" },
-  { number: "14 days", label: "Science-backed reset window" },
+  { number: "Science-backed", label: "Attachment & neuroscience research" },
+  { number: "14 days", label: "Proven reset window" },
+  { number: "3 Tools", label: "Vault, Clock, Pattern Library" },
 ]
 
 export function HeroHome({ onStatusSelect, onStartJourney }: HeroHomeProps) {
@@ -176,18 +176,6 @@ export function HeroHome({ onStatusSelect, onStartJourney }: HeroHomeProps) {
   return (
     <>
       <motion.div className="min-h-screen px-6 py-8 flex flex-col max-w-4xl mx-auto" {...screenTransition}>
-        {/* Premium Badge */}
-        <motion.div
-          initial={{ opacity: 0, y: -20 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="text-center mb-6"
-        >
-          <span className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-pivot-clarity-cyan/10 border border-pivot-clarity-cyan/30 text-pivot-clarity-cyan text-xs font-medium">
-            <Sparkles className="w-3.5 h-3.5" />
-            Trusted by 10,000+ people worldwide
-          </span>
-        </motion.div>
-
         {/* Hero Section - Enhanced */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -196,24 +184,39 @@ export function HeroHome({ onStatusSelect, onStartJourney }: HeroHomeProps) {
           onMouseMove={handleMouseMove}
           onMouseLeave={() => mouseX.set(0)}
         >
-          <h1 className="font-serif text-5xl md:text-7xl font-bold text-foreground mb-6 leading-[1.1] tracking-tight">
-            When love needs{" "}
+          <h1 className="font-serif text-5xl md:text-7xl font-bold text-foreground mb-4 leading-[1.1] tracking-tight">
+            The{" "}
             <motion.span
-              className="inline-block relative"
+              className="inline-block"
               style={{ rotateY, transformStyle: "preserve-3d" }}
+              whileHover={{ rotate: 5 }}
             >
               <span className="inline-flex">
+                <motion.span whileHover={{ rotate: 5 }} style={{ display: "inline-block" }}>
+                  P
+                </motion.span>
+                <motion.span whileHover={{ rotate: 5 }} style={{ display: "inline-block" }}>
+                  I
+                </motion.span>
                 <span
                   className="text-pivot-clarity-cyan inline-block"
                   style={{
                     textShadow: "0 0 30px rgba(0,245,255,0.6), 0 0 60px rgba(0,245,255,0.3)",
+                    transform: "rotate(0deg)",
                   }}
                 >
-                  logic
+                  V
                 </span>
+                <motion.span whileHover={{ rotate: 5 }} style={{ display: "inline-block" }}>
+                  O
+                </motion.span>
+                <motion.span whileHover={{ rotate: 5 }} style={{ display: "inline-block" }}>
+                  T
+                </motion.span>
               </span>
             </motion.span>
           </h1>
+          <p className="text-xl md:text-2xl text-muted-foreground font-serif italic mb-6">When Love Needs Logic</p>
           
           <p className="text-xl md:text-2xl text-foreground/80 max-w-2xl mx-auto leading-relaxed mb-8 font-light">
             The science-backed clarity system for relationship crisis. Get grounded in 14 days.
@@ -472,12 +475,12 @@ export function HeroHome({ onStatusSelect, onStartJourney }: HeroHomeProps) {
                     <span className="text-sm">Secure & Private</span>
                   </div>
                   <div className="flex items-center gap-2 text-muted-foreground">
-                    <Users className="w-5 h-5 text-pivot-clarity-cyan" />
-                    <span className="text-sm">10,000+ Users</span>
+                    <Brain className="w-5 h-5 text-pivot-clarity-cyan" />
+                    <span className="text-sm">Science-Backed</span>
                   </div>
                   <div className="flex items-center gap-2 text-muted-foreground">
-                    <TrendingUp className="w-5 h-5 text-pivot-clarity-cyan" />
-                    <span className="text-sm">94% Success Rate</span>
+                    <Clock className="w-5 h-5 text-pivot-clarity-cyan" />
+                    <span className="text-sm">14-Day Reset</span>
                   </div>
                 </div>
                 <p className="text-xs text-muted-foreground max-w-2xl mx-auto leading-relaxed">
