@@ -4,10 +4,11 @@ import type React from "react"
 
 import { useState } from "react"
 import { motion, useMotionValue, useTransform } from "framer-motion"
-import { ArrowRight, Lock, Clock, Brain, X, Check, Sparkles, Shield, Zap, TrendingUp, Users } from "lucide-react"
+import { ArrowRight, Lock, Clock, Brain, X, Check, Shield, Zap } from "lucide-react"
 import { PivotCard } from "@/components/ui/pivot-card"
 import { Button } from "@/components/ui/button"
 import { saveUserProfile } from "@/lib/storage"
+import Checkout from "@/components/checkout"
 
 interface HeroHomeProps {
   onStatusSelect: (status: "limbo" | "shutdown" | "post-breakup") => void
@@ -143,6 +144,7 @@ export function HeroHome({ onStatusSelect, onStartJourney }: HeroHomeProps) {
   const [selectedStatus, setSelectedStatus] = useState<StatusPath | null>(null)
   const [showHowItWorks, setShowHowItWorks] = useState(false)
   const [showPaywall, setShowPaywall] = useState(false)
+  const [selectedPlanId, setSelectedPlanId] = useState<string | null>(null)
 
   const mouseX = useMotionValue(0)
   const rotateY = useTransform(mouseX, [-200, 200], [-5, 5])
@@ -167,9 +169,11 @@ export function HeroHome({ onStatusSelect, onStartJourney }: HeroHomeProps) {
 
   const handleSelectPlan = (planId: string) => {
     if (planId === "free") {
+      // Free trial - start journey immediately
       onStartJourney()
     } else {
-      onStartJourney()
+      // Paid plans - show checkout
+      setSelectedPlanId(planId === "pro" ? "full-access" : "lifetime")
     }
   }
 
@@ -488,6 +492,42 @@ export function HeroHome({ onStatusSelect, onStartJourney }: HeroHomeProps) {
                   Cancel anytime, no questions asked.
                 </p>
               </motion.div>
+            </div>
+          </motion.div>
+        </motion.div>
+      )}
+
+      {/* Checkout Modal */}
+      {selectedPlanId && (
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          className="fixed inset-0 bg-background/98 backdrop-blur-md z-50 overflow-y-auto"
+        >
+          <motion.div
+            className="min-h-screen px-6 py-12"
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 0.3, ease: "easeOut" }}
+          >
+            <div className="max-w-3xl mx-auto">
+              <div className="flex items-center justify-between mb-8">
+                <div>
+                  <h2 className="font-serif text-3xl font-bold text-foreground mb-2">
+                    Complete Your Purchase
+                  </h2>
+                  <p className="text-muted-foreground">Secure checkout powered by Stripe</p>
+                </div>
+                <button
+                  onClick={() => setSelectedPlanId(null)}
+                  className="w-10 h-10 rounded-full bg-secondary/50 flex items-center justify-center text-muted-foreground hover:text-foreground hover:bg-secondary"
+                >
+                  <X className="w-5 h-5" />
+                </button>
+              </div>
+
+              <Checkout productId={selectedPlanId} />
             </div>
           </motion.div>
         </motion.div>
