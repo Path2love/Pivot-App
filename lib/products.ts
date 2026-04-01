@@ -27,4 +27,16 @@ export const PRODUCTS: Product[] = [
     description: 'Forever access to all current and future tools',
     priceInCents: 7900, // $79.00
   },
+  {
+    id: 'breakthrough-kit',
+    name: 'Breakthrough Kit',
+    description: 'The complete toolkit to break through the deep-rooted blocks holding you back',
+    priceInCents: 4700, // $47.00
+  },
+  {
+    id: 'bundle',
+    name: 'Love Manifestation Sanctuary Bundle',
+    description: '21-Day Challenge, Affirmations, AI Prompts, and Visualization Guide',
+    priceInCents: 1500, // $15.00
+  },
 ]

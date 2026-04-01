@@ -21,7 +21,13 @@ function SuccessContent() {
 
     verifyPurchase(sessionId).then(({ verified }) => {
       if (verified && productId) {
-        const accessLevel = productId === 'lifetime' ? 'lifetime' : 'full-access'
+        type AccessLevel = 'full-access' | 'lifetime' | 'breakthrough-kit' | 'bundle'
+        const accessLevelMap: Record<string, AccessLevel> = {
+          'lifetime': 'lifetime',
+          'breakthrough-kit': 'breakthrough-kit',
+          'bundle': 'bundle',
+        }
+        const accessLevel: AccessLevel = accessLevelMap[productId] ?? 'full-access'
         saveUserProfile({ accessLevel })
         setStatus('success')
         setTimeout(() => router.replace('/'), 1500)

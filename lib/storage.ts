@@ -20,7 +20,7 @@ export interface UserProfile {
   auditCompletedAt?: string
 
   // Access control
-  accessLevel?: 'trial' | 'full-access' | 'lifetime'
+  accessLevel?: 'trial' | 'full-access' | 'lifetime' | 'breakthrough-kit' | 'bundle'
   trialStartDate?: string
 
   // Timeline preferences
@@ -227,7 +227,7 @@ export function incrementUsageStat(stat: keyof UsageStats): void {
   localStorage.setItem(USAGE_KEY, JSON.stringify(stats))
 }
 
-export function getAccessLevel(): 'trial' | 'full-access' | 'lifetime' | null {
+export function getAccessLevel(): 'trial' | 'full-access' | 'lifetime' | 'breakthrough-kit' | 'bundle' | null {
   const profile = getUserProfile()
   return profile.accessLevel ?? null
 }
@@ -244,7 +244,7 @@ export function isTrialExpired(): boolean {
 
 export function hasPaidAccess(): boolean {
   const level = getAccessLevel()
-  return level === 'full-access' || level === 'lifetime'
+  return level === 'full-access' || level === 'lifetime' || level === 'breakthrough-kit' || level === 'bundle'
 }
 
 export function exportAllData(): Record<string, unknown> {

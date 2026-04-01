@@ -30,7 +30,19 @@ export async function POST(req: NextRequest) {
     case 'checkout.session.completed': {
       const session = event.data.object as Stripe.Checkout.Session
       if (session.payment_status === 'paid') {
-        console.log(`[stripe-webhook] Payment confirmed for session ${session.id}`)
+        const productId = session.metadata?.productId
+        const email = session.customer_details?.email
+        console.log(`[stripe-webhook] Payment confirmed for session ${session.id} product=${productId} email=${email}`)
+
+        // Trigger GHL post-purchase automation if webhook URL is configured
+        const ghlWebhookUrl = process.env.GHL_WEBHOOK_URL
+        if (ghlWebhookUrl && email) {
+          fetch(ghlWebhookUrl, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ email, productId, sessionId: session.id }),
+          }).catch((err) => console.error('[stripe-webhook] GHL webhook failed:', err))
+        }
       }
       break
     }

@@ -31,6 +31,7 @@ export async function startCheckoutSession(productId: string, origin: string) {
       },
     ],
     mode: 'payment',
+    metadata: { productId: product.id },
   })
 
   return session.client_secret
