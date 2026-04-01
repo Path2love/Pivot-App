@@ -1,11 +1,11 @@
 "use client"
 
 import { motion } from "framer-motion"
-import { Activity, TrendingUp, Lock, Brain, Compass, Shield, Lightbulb, AlertCircle, Sparkles } from "lucide-react"
+import { Activity, TrendingUp, Lock, Brain, Compass, Shield, Lightbulb, AlertCircle, Sparkles, Download } from "lucide-react"
 import { ClarityClock } from "./clarity-clock"
 import { DailyAnchorCard } from "./daily-anchor-card"
 import { PivotCard } from "@/components/ui/pivot-card"
-import { getUserProfile, getCurrentDay, getCheckIns, getUsageStats, getVaultEntries, getUserNeeds } from "@/lib/storage"
+import { getUserProfile, getCurrentDay, getCheckIns, getUsageStats, getVaultEntries, getUserNeeds, exportAllData } from "@/lib/storage"
 
 interface MainDashboardProps {
   onOpenSubView: (view: string) => void
@@ -14,7 +14,7 @@ interface MainDashboardProps {
 const screenTransition = {
   initial: { opacity: 0, y: 12 },
   animate: { opacity: 1, y: 0 },
-  transition: { duration: 0.25, ease: "easeOut" },
+  transition: { duration: 0.25, ease: "easeOut" as const },
 }
 
 export function MainDashboard({ onOpenSubView }: MainDashboardProps) {
@@ -62,6 +62,21 @@ export function MainDashboard({ onOpenSubView }: MainDashboardProps) {
   }
 
   const behaviorReflection = getBehaviorReflection()
+
+  const handleDownloadData = () => {
+    const data = exportAllData()
+    const json = JSON.stringify(data, null, 2)
+    const blob = new Blob([json], { type: "application/json" })
+    const url = URL.createObjectURL(blob)
+    const date = new Date().toISOString().split("T")[0]
+    const a = document.createElement("a")
+    a.href = url
+    a.download = `pivot-data-${date}.json`
+    document.body.appendChild(a)
+    a.click()
+    document.body.removeChild(a)
+    URL.revokeObjectURL(url)
+  }
 
   return (
     <motion.div className="min-h-screen pb-24" {...screenTransition}>
@@ -306,6 +321,21 @@ export function MainDashboard({ onOpenSubView }: MainDashboardProps) {
           <p className="text-sm text-muted-foreground leading-relaxed text-center italic">
             "The urge will pass. You are still on solid ground."
           </p>
+        </motion.div>
+
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 0.7 }}
+          className="mt-8 text-center"
+        >
+          <button
+            onClick={handleDownloadData}
+            className="inline-flex items-center gap-1.5 text-xs text-muted-foreground hover:text-foreground transition-colours"
+          >
+            <Download className="w-3 h-3" />
+            Download My Data
+          </button>
         </motion.div>
       </div>
     </motion.div>

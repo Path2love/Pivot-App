@@ -53,8 +53,8 @@ const boundaryScenarios = [
       "What else could meet this need right now?",
     ],
     templates: [
-      "I'm feeling the urge to reach out because I want [X]. But I know that right now, contact would [Y].",
-      "This feeling will pass. What I'm really needing is [Z], and I can [do something else] for that.",
+      "I'm feeling the urge to reach out because I want reassurance. But I know that right now, contact would push things further away.",
+      "This feeling will pass. What I'm really needing right now is connection, and I can get that from someone else.",
       "I'm choosing to wait 24 hours before deciding. If I still feel this way tomorrow, I'll reconsider.",
     ],
   },
@@ -83,9 +83,9 @@ const boundaryScenarios = [
       "What would future-you thank present-you for?",
     ],
     templates: [
-      "I commit to not checking their social media for [X days/weeks].",
-      "I commit to calling [friend] when I feel the urge to reach out.",
-      "I commit to [self-care activity] every day, no matter how I feel.",
+      "I commit to not checking their social media for the next 7 days.",
+      "I commit to calling a trusted friend when I feel the urge to reach out to them.",
+      "I commit to doing something that fills me up every day, no matter how I feel.",
     ],
   },
 ]
@@ -135,7 +135,7 @@ export function BoundaryBuilder({ onBack }: BoundaryBuilderProps) {
 
           {/* Reflection Questions */}
           <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.1 }}>
-            <PivotCard variant="amber" className="mb-6">
+            <PivotCard variant="default" className="mb-6">
               <div className="flex items-center gap-2 text-pivot-warm-amber mb-2">
                 <Lightbulb className="w-4 h-4" />
                 <span className="text-sm font-medium">Questions to consider first</span>

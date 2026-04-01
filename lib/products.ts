@@ -19,7 +19,7 @@ export const PRODUCTS: Product[] = [
     id: 'full-access',
     name: 'Full Access',
     description: 'Complete 14-day reset program with all tools and features',
-    priceInCents: 2900, // $29.00
+    priceInCents: 700, // $7.00
   },
   {
     id: 'lifetime',

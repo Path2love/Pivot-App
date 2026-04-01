@@ -15,13 +15,23 @@ interface SafetyVaultProps {
 const screenTransition = {
   initial: { opacity: 0, y: 12 },
   animate: { opacity: 1, y: 0 },
-  transition: { duration: 0.25, ease: "easeOut" },
+  transition: { duration: 0.25, ease: "easeOut" as const },
 }
+
+const vaultResponses = [
+  "If you send this now, you are medicating their choice. Let them feel the silence so they can find their own truth.",
+  "The urge to reach out is your nervous system looking for relief. Give it something else instead. A walk, a call to a friend, a glass of water.",
+  "Read this back in 24 hours. You'll know then whether it still needs to be said.",
+  "Sending this would be for you, not for the relationship. Sit with that.",
+  "The version of you that wrote this is in pain. They deserve space, not a send button.",
+  "You already know what you need. This message isn't it.",
+]
 
 export function SafetyVault({ onBack }: SafetyVaultProps) {
   const [text, setText] = useState("")
   const [showResponse, setShowResponse] = useState(false)
   const [showPastEntries, setShowPastEntries] = useState(false)
+  const [currentResponse, setCurrentResponse] = useState("")
 
   const pastEntries = getVaultEntries()
 
@@ -43,6 +53,8 @@ export function SafetyVault({ onBack }: SafetyVaultProps) {
 
     incrementUsageStat("vaultDeposits")
 
+    const response = vaultResponses[Math.floor(Math.random() * vaultResponses.length)]
+    setCurrentResponse(response)
     setText("")
     setShowResponse(true)
   }
@@ -122,8 +134,7 @@ export function SafetyVault({ onBack }: SafetyVaultProps) {
                   <span className="font-semibold text-lg">Words Secured</span>
                 </div>
                 <p className="text-base text-foreground leading-relaxed mb-4">
-                  If you send this now, you are medicating their choice. Let them feel the silence so they can find
-                  their own truth.
+                  {currentResponse}
                 </p>
                 <p className="text-muted-foreground text-sm italic">
                   Come back in 24 hours if you still need to send it.

@@ -2,9 +2,9 @@
 
 import type React from "react"
 
-import { useState } from "react"
-import { motion, useMotionValue, useTransform } from "framer-motion"
-import { ArrowRight, Lock, Clock, Brain, X, Check, Shield, Zap } from "lucide-react"
+import { useState, useRef } from "react"
+import { motion, useMotionValue, useTransform, AnimatePresence } from "framer-motion"
+import { ArrowRight, Lock, Clock, Brain, X, Check, Shield, Zap, Mail } from "lucide-react"
 import { PivotCard } from "@/components/ui/pivot-card"
 import { Button } from "@/components/ui/button"
 import { saveUserProfile } from "@/lib/storage"
@@ -20,7 +20,7 @@ type StatusPath = "limbo" | "shutdown" | "post-breakup"
 const screenTransition = {
   initial: { opacity: 0, y: 12 },
   animate: { opacity: 1, y: 0 },
-  transition: { duration: 0.25, ease: "easeOut" },
+  transition: { duration: 0.25, ease: "easeOut" as const },
 }
 
 const statusPaths: {
@@ -53,7 +53,7 @@ const howItWorksSteps = [
   {
     step: 1,
     title: "The Status Check",
-    description: "You tell us where you are so the system can calibrate to your nervous system state.",
+    description: "You tell us where you are. The system adapts your experience based on your situation.",
   },
   {
     step: 2,
@@ -83,12 +83,12 @@ const pricingPlans = [
     name: "Free Trial",
     price: "$0",
     period: "3 days",
-    description: "Start your clarity journey",
+    description: "3 days of full access, no card required",
     features: [
       "System Audit & Profile",
       "3-Day Clarity Window",
-      "Safety Vault (3 entries)",
-      "Pattern Library (View only)",
+      "Full Safety Vault access",
+      "Full Pattern Library access",
       "Panic Button",
     ],
     cta: "Start Free Trial",
@@ -97,7 +97,7 @@ const pricingPlans = [
   {
     id: "pro",
     name: "Full Access",
-    price: "$29",
+    price: "$7",
     period: "one-time",
     description: "Complete 14-day reset program",
     features: [
@@ -110,7 +110,6 @@ const pricingPlans = [
       "Needs Explorer",
       "24/7 Panic Mode Support",
       "Progress Tracking",
-      "Export Your Journey",
     ],
     cta: "Get Full Access",
     popular: true,
@@ -137,7 +136,7 @@ const pricingPlans = [
 const trustIndicators = [
   { number: "Science-backed", label: "Attachment & neuroscience research" },
   { number: "14 days", label: "Proven reset window" },
-  { number: "3 Tools", label: "Vault, Clock, Pattern Library" },
+  { number: "7 tools", label: "Vault, Patterns, Reflection + more" },
 ]
 
 export function HeroHome({ onStatusSelect, onStartJourney }: HeroHomeProps) {
@@ -145,6 +144,10 @@ export function HeroHome({ onStatusSelect, onStartJourney }: HeroHomeProps) {
   const [showHowItWorks, setShowHowItWorks] = useState(false)
   const [showPaywall, setShowPaywall] = useState(false)
   const [selectedPlanId, setSelectedPlanId] = useState<string | null>(null)
+  const [showEmailCapture, setShowEmailCapture] = useState(false)
+  const [email, setEmail] = useState("")
+  const [emailError, setEmailError] = useState("")
+  const emailInputRef = useRef<HTMLInputElement>(null)
 
   const mouseX = useMotionValue(0)
   const rotateY = useTransform(mouseX, [-200, 200], [-5, 5])
@@ -169,13 +172,26 @@ export function HeroHome({ onStatusSelect, onStartJourney }: HeroHomeProps) {
 
   const handleSelectPlan = (planId: string) => {
     if (planId === "free") {
-      // Free trial - start journey immediately
-      setShowPaywall(false)
-      onStartJourney()
+      setShowEmailCapture(true)
     } else {
       // Paid plans - show checkout
       setSelectedPlanId(planId === "pro" ? "full-access" : "lifetime")
     }
+  }
+
+  const handleEmailSubmit = (e: React.FormEvent) => {
+    e.preventDefault()
+    const trimmed = email.trim()
+    if (!trimmed || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(trimmed)) {
+      setEmailError("Please enter a valid email address.")
+      emailInputRef.current?.focus()
+      return
+    }
+    setEmailError("")
+    saveUserProfile({ email: trimmed, accessLevel: 'trial', trialStartDate: new Date().toISOString() })
+    setShowEmailCapture(false)
+    setShowPaywall(false)
+    onStartJourney()
   }
 
   return (
@@ -497,6 +513,85 @@ export function HeroHome({ onStatusSelect, onStartJourney }: HeroHomeProps) {
           </motion.div>
         </motion.div>
       )}
+
+      {/* Email Capture Modal */}
+      <AnimatePresence>
+        {showEmailCapture && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 bg-background/95 backdrop-blur-md z-[60] flex items-center justify-center px-6"
+          >
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95, y: 12 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.95, y: 12 }}
+              transition={{ duration: 0.25, ease: "easeOut" }}
+              className="w-full max-w-md"
+            >
+              <PivotCard className="p-8 border-pivot-clarity-cyan/30">
+                <div className="flex items-center justify-between mb-6">
+                  <div className="w-12 h-12 rounded-full bg-pivot-clarity-cyan/20 flex items-center justify-center">
+                    <Mail className="w-6 h-6 text-pivot-clarity-cyan" />
+                  </div>
+                  <button
+                    onClick={() => {
+                      setShowEmailCapture(false)
+                      setEmailError("")
+                    }}
+                    className="w-10 h-10 rounded-full bg-secondary/50 flex items-center justify-center text-muted-foreground hover:text-foreground hover:bg-secondary"
+                  >
+                    <X className="w-5 h-5" />
+                  </button>
+                </div>
+
+                <h3 className="font-serif text-2xl font-bold text-foreground mb-2">
+                  One last thing before we start
+                </h3>
+                <p className="text-muted-foreground text-sm mb-6">
+                  Enter your email so we can save your progress. Your 3-day free trial starts immediately.
+                </p>
+
+                <form onSubmit={handleEmailSubmit} className="space-y-4">
+                  <div>
+                    <input
+                      ref={emailInputRef}
+                      type="email"
+                      placeholder="your@email.com"
+                      value={email}
+                      onChange={(e) => {
+                        setEmail(e.target.value)
+                        if (emailError) setEmailError("")
+                      }}
+                      autoFocus
+                      className="w-full px-4 py-3 rounded-xl bg-secondary/50 border border-border text-foreground placeholder:text-muted-foreground/50 focus:outline-none focus:ring-2 focus:ring-pivot-clarity-cyan/50 focus:border-pivot-clarity-cyan transition-all"
+                    />
+                    {emailError && (
+                      <p className="text-red-400 text-xs mt-2">{emailError}</p>
+                    )}
+                  </div>
+
+                  <Button
+                    type="submit"
+                    className="w-full rounded-full py-6 text-lg bg-pivot-clarity-cyan hover:bg-pivot-clarity-cyan/90 text-background font-semibold shadow-[0_0_30px_rgba(0,245,255,0.3)]"
+                  >
+                    Start My Free Trial
+                    <ArrowRight className="w-5 h-5 ml-2" />
+                  </Button>
+                </form>
+
+                <div className="flex items-center gap-2 mt-4 justify-center">
+                  <Shield className="w-3.5 h-3.5 text-muted-foreground/60" />
+                  <p className="text-xs text-muted-foreground/60">
+                    We'll never share your email. No spam, ever.
+                  </p>
+                </div>
+              </PivotCard>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       {/* Checkout Modal */}
       {selectedPlanId && (

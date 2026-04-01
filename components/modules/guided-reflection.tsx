@@ -17,7 +17,7 @@ const reflectionCategories = [
   {
     id: "feelings",
     title: "What I'm Feeling",
-    color: "cyan" as const,
+    color: "clarity" as const,
     prompts: [
       "What emotions have been most present for you today? Can you name them without judging them?",
       "Where do you feel this emotion in your body? What sensations do you notice?",
@@ -29,7 +29,7 @@ const reflectionCategories = [
   {
     id: "situation",
     title: "Understanding What Happened",
-    color: "amber" as const,
+    color: "default" as const,
     prompts: [
       "If you stepped outside yourself and watched this situation like a movie, what would you see?",
       "What parts of this situation were within your control? What parts weren't?",
@@ -41,7 +41,7 @@ const reflectionCategories = [
   {
     id: "patterns",
     title: "Patterns I Notice",
-    color: "rose" as const,
+    color: "heart" as const,
     prompts: [
       "Does this situation remind you of anything from your past? What feels familiar?",
       "What role do you typically play in relationships? Is that a role you chose?",
@@ -53,7 +53,7 @@ const reflectionCategories = [
   {
     id: "needs",
     title: "What I Need",
-    color: "cyan" as const,
+    color: "clarity" as const,
     prompts: [
       "What do you need most right now? Not what you should need—what do you actually need?",
       "When have you felt truly safe and seen in a relationship? What made that possible?",
@@ -65,7 +65,7 @@ const reflectionCategories = [
   {
     id: "growth",
     title: "Moving Forward",
-    color: "green" as const,
+    color: "logic" as const,
     prompts: [
       "What would it mean to be kind to yourself right now? What would that look like in practice?",
       "What are you learning about yourself through this experience?",
@@ -229,7 +229,7 @@ export function GuidedReflection({ onBack }: GuidedReflectionProps) {
               exit={{ opacity: 0, y: -20 }}
               className="space-y-6"
             >
-              <PivotCard variant={selectedCategoryData?.color || "cyan"}>
+              <PivotCard variant={selectedCategoryData?.color || "clarity"}>
                 <p className="font-serif text-lg text-foreground/90 leading-relaxed italic">"{currentPrompt}"</p>
               </PivotCard>
 
@@ -268,7 +268,7 @@ export function GuidedReflection({ onBack }: GuidedReflectionProps) {
               exit={{ opacity: 0, y: -20 }}
               className="space-y-6"
             >
-              <PivotCard variant="green">
+              <PivotCard variant="logic">
                 <div className="flex items-center gap-2 text-pivot-growth-green mb-2">
                   <Sparkles className="w-4 h-4" />
                   <span className="text-sm font-medium">Reflection saved</span>

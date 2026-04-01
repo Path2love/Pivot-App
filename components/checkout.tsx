@@ -12,8 +12,12 @@ import { startCheckoutSession } from '@/app/actions/stripe'
 const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY!)
 
 export default function Checkout({ productId }: { productId: string }) {
-  const startCheckoutSessionForProduct = useCallback(
-    () => startCheckoutSession(productId),
+  const fetchClientSecret = useCallback(
+    async () => {
+      const secret = await startCheckoutSession(productId, window.location.origin)
+      if (!secret) throw new Error('No client secret returned for this product')
+      return secret
+    },
     [productId],
   )
 
@@ -21,7 +25,7 @@ export default function Checkout({ productId }: { productId: string }) {
     <div id="checkout">
       <EmbeddedCheckoutProvider
         stripe={stripePromise}
-        options={{ fetchClientSecret: startCheckoutSessionForProduct }}
+        options={{ fetchClientSecret }}
       >
         <EmbeddedCheckout />
       </EmbeddedCheckoutProvider>

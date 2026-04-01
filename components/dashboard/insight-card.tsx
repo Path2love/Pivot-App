@@ -37,8 +37,8 @@ const insightsByStatus: Record<string, { title: string; content: string; lgbtqNo
 
 export function InsightCard() {
   const profile = getUserProfile()
-  const status = profile.status || "limbo"
-  const sharedHome = profile.sharedHome
+  const status = profile.statusPath || "limbo"
+  const sharedHome = profile.sharedCommunity
   const insight = insightsByStatus[status] || insightsByStatus.limbo
 
   return (

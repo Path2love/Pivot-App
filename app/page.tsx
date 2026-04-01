@@ -23,7 +23,7 @@ import { SafetyVault } from "@/components/modules/safety-vault"
 import { PatternLibrary } from "@/components/modules/pattern-library"
 import { NavBar } from "@/components/dashboard/nav-bar"
 import { PanicButton } from "@/components/dashboard/panic-button"
-import { getUserProfile, saveUserProfile } from "@/lib/storage"
+import { getUserProfile, saveUserProfile, getAccessLevel, isTrialExpired } from "@/lib/storage"
 
 type AppState = "hero" | "audit" | "next-steps" | "mission-briefing" | "onboarding" | "dashboard"
 type OnboardingStep = "welcome" | "identity" | "situation" | "attachment" | "living" | "timeline" | "complete"
@@ -39,9 +39,17 @@ export default function ThePivot() {
 
   useEffect(() => {
     const profile = getUserProfile()
+    const accessLevel = getAccessLevel()
+    const trialExpired = isTrialExpired()
 
     if (profile.onboardingComplete && profile.auditProfile) {
-      setAppState("dashboard")
+      // Has completed onboarding — check access
+      if (!accessLevel || trialExpired) {
+        // No access or trial expired — back to hero to upgrade
+        setAppState("hero")
+      } else {
+        setAppState("dashboard")
+      }
     } else if (profile.auditProfile && !profile.onboardingComplete) {
       setAppState("mission-briefing")
     } else if (profile.statusPath && !profile.auditProfile) {
@@ -107,8 +115,8 @@ export default function ThePivot() {
     setAppState("dashboard")
   }
 
-  const handleOpenSubView = (view: SubView) => {
-    setSubView(view)
+  const handleOpenSubView = (view: string) => {
+    setSubView(view as SubView)
   }
 
   const handleCloseSubView = () => {

@@ -1,5 +1,6 @@
 export interface UserProfile {
   // Basic info
+  email?: string
   age?: string
   identity?: string
   pronouns?: string
@@ -17,6 +18,10 @@ export interface UserProfile {
   auditAnswers?: Record<string, "a" | "b">
   auditProfile?: "integrated" | "compartmentalized" | "shutdown"
   auditCompletedAt?: string
+
+  // Access control
+  accessLevel?: 'trial' | 'full-access' | 'lifetime'
+  trialStartDate?: string
 
   // Timeline preferences
   clarityDuration?: number
@@ -220,4 +225,37 @@ export function incrementUsageStat(stat: keyof UsageStats): void {
   const stats = getUsageStats()
   stats[stat] = (stats[stat] || 0) + 1
   localStorage.setItem(USAGE_KEY, JSON.stringify(stats))
+}
+
+export function getAccessLevel(): 'trial' | 'full-access' | 'lifetime' | null {
+  const profile = getUserProfile()
+  return profile.accessLevel ?? null
+}
+
+export function isTrialExpired(): boolean {
+  const profile = getUserProfile()
+  if (profile.accessLevel !== 'trial') return false
+  if (!profile.trialStartDate) return true
+  const start = new Date(profile.trialStartDate)
+  const now = new Date()
+  const diffDays = (now.getTime() - start.getTime()) / (1000 * 60 * 60 * 24)
+  return diffDays > 3
+}
+
+export function hasPaidAccess(): boolean {
+  const level = getAccessLevel()
+  return level === 'full-access' || level === 'lifetime'
+}
+
+export function exportAllData(): Record<string, unknown> {
+  return {
+    exportedAt: new Date().toISOString(),
+    profile: getUserProfile(),
+    journalEntries: getJournalEntries(),
+    checkIns: getCheckIns(),
+    needs: getUserNeeds(),
+    boundaries: getBoundaries(),
+    vaultEntries: getVaultEntries(),
+    usageStats: getUsageStats(),
+  }
 }

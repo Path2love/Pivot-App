@@ -3,21 +3,20 @@
 import { stripe } from '@/lib/stripe'
 import { PRODUCTS } from '@/lib/products'
 
-export async function startCheckoutSession(productId: string) {
+export async function startCheckoutSession(productId: string, origin: string) {
   const product = PRODUCTS.find((p) => p.id === productId)
   if (!product) {
     throw new Error(`Product with id "${productId}" not found`)
   }
 
-  // Free trial - no payment needed
   if (product.priceInCents === 0) {
     return null
   }
 
-  // Create Checkout Sessions from body params.
   const session = await stripe.checkout.sessions.create({
     ui_mode: 'embedded',
-    redirect_on_completion: 'never',
+    redirect_on_completion: 'if_required',
+    return_url: `${origin}/success?session_id={CHECKOUT_SESSION_ID}&product=${productId}`,
     line_items: [
       {
         price_data: {
@@ -35,4 +34,19 @@ export async function startCheckoutSession(productId: string) {
   })
 
   return session.client_secret
+}
+
+export async function verifyPurchase(sessionId: string): Promise<{
+  verified: boolean
+  productId: string | null
+}> {
+  try {
+    const session = await stripe.checkout.sessions.retrieve(sessionId)
+    if (session.payment_status === 'paid') {
+      return { verified: true, productId: session.metadata?.productId ?? null }
+    }
+    return { verified: false, productId: null }
+  } catch {
+    return { verified: false, productId: null }
+  }
 }

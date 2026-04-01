@@ -68,7 +68,7 @@ export function PanicButton() {
     <>
       <motion.button
         onClick={startExercise}
-        className="fixed bottom-24 right-4 w-14 h-14 rounded-full flex items-center justify-center shadow-lg z-40"
+        className="fixed bottom-28 right-4 w-14 h-14 rounded-full flex items-center justify-center shadow-lg z-40"
         style={{ backgroundColor: "#691d33" }}
         whileHover={{ scale: 1.05 }}
         whileTap={{ scale: 0.95 }}

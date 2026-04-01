@@ -13,7 +13,7 @@ interface MissionBriefingProps {
 const screenTransition = {
   initial: { opacity: 0, y: 12 },
   animate: { opacity: 1, y: 0 },
-  transition: { duration: 0.25, ease: "easeOut" },
+  transition: { duration: 0.25, ease: "easeOut" as const },
 }
 
 export function MissionBriefing({ onEnterDashboard }: MissionBriefingProps) {

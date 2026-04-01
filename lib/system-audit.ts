@@ -208,7 +208,7 @@ export const profileDescriptions: Record<
   shutdown: {
     title: "Shutdown Cycle",
     logic:
-      "This pattern shows that closeness is perceived as a threat. The 'logic' suggests that without professional intervention, the 'switch' will continue to flip during transitions.",
+      "This pattern shows that closeness can feel like a threat. When safety feels conditional, distance becomes the default response. This is one of the most common patterns we work with.",
     color: "pivot-clarity-cyan",
   },
 }
@@ -265,9 +265,9 @@ export const profileNextSteps: Record<
         description: "Review a daily 'Why' list. Accept that caring does not equal reliable.",
       },
       {
-        title: "Professional Requirement",
+        title: "Pattern Interruption",
         description:
-          "Acknowledge this as a hard-coded loop. Without therapy or reprogramming, the 'switch' will continue to flip.",
+          "The Shutdown Cycle is a learned loop, not a life sentence. Your 14-day reset is specifically designed to help you understand and interrupt this pattern.",
       },
     ],
   },
