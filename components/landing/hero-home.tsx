@@ -97,7 +97,7 @@ const pricingPlans = [
   {
     id: "pro",
     name: "Full Access",
-    price: "$7",
+    price: "$37",
     period: "one-time",
     description: "Complete 14-day reset program",
     features: [

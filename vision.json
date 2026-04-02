@@ -1,0 +1,83 @@
+{
+  "meta": {
+    "createdAt": "2026-04-01T16:00:00Z",
+    "updatedAt": "2026-04-01T16:00:00Z",
+    "version": "1.0",
+    "plaidVersion": "1.0"
+  },
+  "creator": {
+    "name": "Alison Verge",
+    "expertise": "Relationship Intelligence Coach with 20 years of strategic relationship management experience. Creator of L.O.V.E. Engineering framework with 56 AI coaching tools.",
+    "background": "I rebuilt my nervous system after CRPS/Dysautonomia before I could rebuild my love life. I managed complex relationships in boardrooms for 20 years, then realized love needs the same strategy. Now I help accomplished professionals clear the blocks that keep them stuck in love. The Pivot was born from watching people in relationship crisis make reactive decisions that made everything worse. They needed a tool that could hold them steady for 14 days while their neurochemistry stopped screaming."
+  },
+  "purpose": {
+    "whoYouHelp": "Accomplished, growth-driven professionals going through a relationship crisis: their partner went silent, the relationship imploded, or they're stuck in limbo wondering what went wrong. They're smart, capable people who have their life together in every area except this one moment.",
+    "problemYouSolve": "When a relationship hits crisis, the brain goes into withdrawal mode. People send texts they regret, obsess over what went wrong, lose sleep, and make reactive decisions that push their partner further away or prevent them from healing. There's no structured tool for the acute phase of relationship crisis. Therapy has a 2-week waitlist. Apps are for dating, not for the 2am spiral.",
+    "desiredTransformation": "From spiralling at 2am, checking their ex's Instagram, and sending texts they'll regret, to grounded, clear-headed, and making decisions from their values instead of their pain. In 14 days, their neurochemistry stops reacting and starts thinking. They know what kind of relationship system they were in, what patterns were running, and what they actually need.",
+    "whyYou": "I've lived both sides. I've been the person spiralling at 2am and the coach watching clients make the same reactive mistakes. I built 56 AI coaching tools. I understand attachment theory, neuroscience, and NLP. But more than that, I know that people in crisis don't need a lecture. They need someone to name what they're feeling and give them one thing to do right now. That's what The Pivot does."
+  },
+  "product": {
+    "name": "The Pivot",
+    "oneLiner": "A 14-day relationship crisis reset for when love needs logic.",
+    "howItWorks": "User arrives in crisis. They select their situation (Limbo, Shutdown, or Post-Breakup). They take a 10-question System Audit that profiles their relationship as Integrated, Compartmentalized, or Shutdown Cycle. They enter their email, choose free trial or paid access ($37), and begin the 14-day reset. Each day they get a Daily Anchor with three layers: Heart (names what they're feeling), Logic (explains why), and Prompt (gives them one thing to do). Between anchors, they use tools: Safety Vault (park texts instead of sending them), Pattern Library (understand why they react the way they do), Guided Reflection, Daily Check-Ins, Boundary Builder, Needs Explorer, and a Panic Button with 4-4-8 breathing for acute moments.",
+    "keyCapabilities": [
+      "System Audit: 10-question diagnostic that profiles your relationship crisis type",
+      "Daily Anchors: 14 days of structured Heart/Logic/Prompt content for grounding",
+      "Safety Vault: Park the text you want to send, get a reality check, revisit in 24 hours",
+      "Pattern Library: Named proprietary patterns (Shutdown Cycle, The Dimming Effect, Caring Paradox) that help users understand their reactions",
+      "Panic Button: 4-4-8 breathing exercise for acute crisis moments"
+    ],
+    "platform": "web",
+    "marketDifferentiation": "No other app specifically addresses the acute phase of relationship crisis with a structured, time-bound program. Therapy apps (BetterHelp, Talkspace) are generic and expensive. Breakup apps (Mend) are passive journaling tools. Dating apps assume you're ready to move on. The Pivot meets you in the crisis and gives you a system for the next 14 days. It uses proprietary named concepts (Shutdown Cycle, The Dimming Effect, Safety Vault) that make users feel seen and give them language for what they're experiencing.",
+    "magicMoment": "The user takes the System Audit and sees their profile: 'You're in a Shutdown Cycle.' For the first time, they have a name for what's happening. It's not their fault. It's a pattern. And there's a structured path through it. That moment of recognition is the conversion point."
+  },
+  "audience": {
+    "primaryUser": "A 38-year-old professional whose partner just went silent. They're accomplished, they believe in personal development, they've got their life together. But right now they're checking their phone every 3 minutes, can't sleep, can't eat, and are about to send a text that will make everything worse. They're not looking for a dating app. They're looking for someone to tell them what's actually happening and what to do right now.",
+    "secondaryUsers": [
+      "Post-breakup professionals who intellectually know it's over but can't stop the emotional spiral",
+      "People in relationship limbo who are doing all the work while their partner pulls back",
+      "Coaches and therapists who want to recommend a structured crisis tool to their clients"
+    ],
+    "currentAlternatives": "Mend (breakup app, passive journaling, no structured program, younger demographic), BetterHelp/Talkspace (expensive, generic, 2-week waitlist), self-help books (not interactive, not available at 2am), friends (well-meaning but unstructured), Google/Reddit (overwhelming, contradictory advice), doing nothing (most common, worst outcomes)",
+    "frustrations": "Everything available is either too expensive (therapy at $250/session), too passive (journaling apps), too generic (meditation apps), or too slow (books). Nothing specifically addresses the first 14 days of crisis with a structured, science-backed approach. Nothing names the patterns. Nobody says 'this is a Shutdown Cycle and here's what to do about it.'"
+  },
+  "business": {
+    "revenueModel": "one-time",
+    "initialGoal": "100 paid users in 90 days at $37 each ($3,700 revenue). 500+ free System Audit completions. Email list of 300+ relationship crisis leads. Validated that the content pipeline (Chatterbox + Remotion) can produce 10+ videos/week driving organic traffic.",
+    "sixMonthVision": "1,000+ paid users, price raised to $57 ($57,000 cumulative revenue). The Pivot becomes the recognized tool for relationship crisis. System Audit becomes a viral diagnostic that drives organic acquisition. 20% of Pivot users convert upstream to Love Mastery IQ membership ($49-99/mo). Pipeline: social content drives audit completions, audit drives email capture, email drives $37 purchase, purchase drives upstream membership.",
+    "constraints": "Solo founder with AI-powered team (Claude Code + Paperclip agents). $0 marketing budget initially (organic content only). Technical infrastructure already built (Vercel, Supabase Pro, Stripe, GoHighLevel). Content pipeline built (Chatterbox for voice, Remotion for video). Main constraint is founder time for content approval and strategic decisions.",
+    "goToMarket": "Content-first distribution using short-form video (TikTok, Reels, Shorts) with emotional hooks that meet people in the crisis moment. Videos produced via Claude > Chatterbox > Remotion pipeline at near-zero cost. Free System Audit as top-of-funnel lead magnet with email capture. 3-email GHL nurture sequence. AEO blog posts targeting the 20 questions people Google during breakups. Programmatic SEO for long-tail relationship crisis keywords. Shareable viral artifacts (audit profile results). Monthly content volume: 40+ short-form videos, 5+ blog posts, weekly email."
+  },
+  "feeling": {
+    "brandPersonality": "The trusted friend who also happens to be brilliant at relationships. Warm but direct. Names the feeling before explaining it. Challenges lovingly. Never clinical, never fluffy. Like talking to someone over wine who happens to know exactly what you're going through because they've been there.",
+    "visualMood": "Dark, premium, calming. Think late-night app you'd use at 2am when you can't sleep. Near-black backgrounds with cyan (#00f5ff) as the clarity/logic accent and wine (#691d33) as the warmth/emotion accent. Subtle glow effects. Feels like a safe harbour, not a medical app.",
+    "toneOfVoice": "Conversational, warm, direct. Canadian spelling. Names emotions specifically ('Your chest feels tight and the silence is loud') before explaining them. Uses proprietary language (Shutdown Cycle, The Dimming Effect, Safety Vault) naturally, not forced. Never says 'unpack,' 'hold space,' or 'healing journey.' Never uses em dashes. Challenges the user lovingly: 'The question isn't why did they leave. The question is what kind of system were you in?'",
+    "antiPatterns": "Never feel clinical or medical. Never feel like therapy ('tell me about your childhood'). Never feel like a dating app. Never feel like toxic positivity ('everything happens for a reason!'). Never feel cheap or gimmicky. Never use jargon without explanation. Never assume the user has mastered everything except love. Never say 'over 40' in public content."
+  },
+  "techStack": {
+    "appType": "web",
+    "frontend": {
+      "choice": "Next.js 16",
+      "rationale": "App Router with Turbopack. Already built and deployed. v0-generated initial codebase, refined by hand."
+    },
+    "backend": {
+      "choice": "Supabase",
+      "rationale": "Pro plan already paid ($25/mo). Currently using localStorage but migrating to Supabase for cross-device persistence and data durability."
+    },
+    "database": {
+      "choice": "Supabase PostgreSQL",
+      "rationale": "Included with Supabase Pro. Will store user profiles, vault entries, check-in history, and payment status."
+    },
+    "auth": {
+      "choice": "None (email capture only)",
+      "rationale": "No user accounts currently. Email captured on trial signup, stored in localStorage and sent to GoHighLevel CRM. Future: magic link auth via Supabase when adding persistence."
+    },
+    "payments": {
+      "choice": "Stripe",
+      "rationale": "Embedded Checkout with server actions. Webhook handler for checkout.session.completed. Products: Free Trial ($0), Full Access ($37), Lifetime ($79), plus Breakthrough Kit ($47) and Bundle ($15) from broader ecosystem."
+    }
+  },
+  "tooling": {
+    "codingAgent": "claude-code"
+  }
+}
