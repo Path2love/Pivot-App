@@ -1,16 +1,18 @@
 import { NextRequest, NextResponse } from "next/server"
 
 export async function POST(req: NextRequest) {
-  const webhookUrl = process.env.GHL_WEBHOOK_URL
-  if (!webhookUrl) {
-    return NextResponse.json({ error: "GHL_WEBHOOK_URL not configured" }, { status: 500 })
-  }
-
   const body = await req.json()
   const { email, source, timestamp } = body
 
   if (!email || typeof email !== "string") {
     return NextResponse.json({ error: "Invalid email" }, { status: 400 })
+  }
+
+  const webhookUrl = process.env.GHL_WEBHOOK_URL
+  if (!webhookUrl) {
+    // GHL not yet configured — log and return success so user journey is not blocked
+    console.warn(`[ghl-capture] GHL_WEBHOOK_URL not set — email not forwarded: ${email} source=${source}`)
+    return NextResponse.json({ ok: true })
   }
 
   try {
