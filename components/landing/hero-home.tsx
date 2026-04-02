@@ -189,6 +189,14 @@ export function HeroHome({ onStatusSelect, onStartJourney }: HeroHomeProps) {
     }
     setEmailError("")
     saveUserProfile({ email: trimmed, accessLevel: 'trial', trialStartDate: new Date().toISOString() })
+
+    // Fire-and-forget: send email to GoHighLevel
+    fetch("/api/ghl-capture", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ email: trimmed, source: "pivot-audit", timestamp: new Date().toISOString() }),
+    }).catch(() => {/* non-blocking */})
+
     setShowEmailCapture(false)
     setShowPaywall(false)
     onStartJourney()
