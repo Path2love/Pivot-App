@@ -7,14 +7,17 @@ import { useSearchParams, useRouter } from 'next/navigation'
 import { verifyPurchase } from '@/app/actions/stripe'
 import { saveUserProfile } from '@/lib/storage'
 
+const GHL_PRODUCTS = ['breakthrough-kit', 'bundle']
+
 function SuccessContent() {
   const searchParams = useSearchParams()
   const router = useRouter()
   const [status, setStatus] = useState<'verifying' | 'success' | 'error'>('verifying')
+  const [productId, setProductId] = useState<string | null>(null)
 
   useEffect(() => {
     const sessionId = searchParams.get('session_id')
-    const productId = searchParams.get('product')
+    const pid = searchParams.get('product')
 
     if (!sessionId) {
       setStatus('error')
@@ -22,17 +25,21 @@ function SuccessContent() {
     }
 
     verifyPurchase(sessionId).then(({ verified }) => {
-      if (verified && productId) {
+      if (verified) {
         type AccessLevel = 'full-access' | 'lifetime' | 'breakthrough-kit' | 'bundle'
         const accessLevelMap: Record<string, AccessLevel> = {
           'lifetime': 'lifetime',
           'breakthrough-kit': 'breakthrough-kit',
           'bundle': 'bundle',
         }
-        const accessLevel: AccessLevel = accessLevelMap[productId] ?? 'full-access'
+        const accessLevel: AccessLevel = accessLevelMap[pid ?? ''] ?? 'full-access'
         saveUserProfile({ accessLevel })
+        setProductId(pid)
         setStatus('success')
-        setTimeout(() => router.replace('/'), 1500)
+        // GHL funnel products are delivered by email — stay on this page
+        if (!pid || !GHL_PRODUCTS.includes(pid)) {
+          setTimeout(() => router.replace('/'), 1500)
+        }
       } else {
         setStatus('error')
       }
@@ -51,11 +58,19 @@ function SuccessContent() {
   }
 
   if (status === 'success') {
+    const isGhlProduct = productId && GHL_PRODUCTS.includes(productId)
     return (
       <div className="min-h-screen flex items-center justify-center bg-background">
-        <div className="text-center space-y-4">
+        <div className="text-center space-y-4 max-w-sm px-6">
           <div className="text-4xl">✓</div>
-          <p className="text-foreground font-semibold">You're in. Starting your reset.</p>
+          {isGhlProduct ? (
+            <>
+              <p className="text-foreground font-semibold">Your order is confirmed.</p>
+              <p className="text-muted-foreground text-sm">Check your email — your materials are on their way.</p>
+            </>
+          ) : (
+            <p className="text-foreground font-semibold">You&apos;re in. Starting your reset.</p>
+          )}
         </div>
       </div>
     )
