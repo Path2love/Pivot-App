@@ -372,6 +372,11 @@ export function HeroHome({ onStatusSelect, onStartJourney }: HeroHomeProps) {
           transition={{ delay: 0.8 }}
           className="space-y-4 max-w-md mx-auto w-full"
         >
+          {!selectedStatus && (
+            <p className="text-center text-muted-foreground text-sm">
+              ↑ Select your situation above to continue
+            </p>
+          )}
           <Button
             onClick={handleStart}
             disabled={!selectedStatus}
