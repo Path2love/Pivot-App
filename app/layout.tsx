@@ -41,6 +41,16 @@ export default function RootLayout({
       >
         {children}
         <Analytics />
+        <footer className="w-full text-center py-4 px-4 border-t border-border/20 text-xs text-muted-foreground">
+          &copy; {new Date().getFullYear()} Path2Love Mastery &mdash;{" "}
+          <a href="https://path2love.com/privacy" className="underline underline-offset-2 hover:text-foreground transition-colors">
+            Privacy Policy
+          </a>{" "}
+          &middot;{" "}
+          <a href="mailto:support@path2love.com" className="underline underline-offset-2 hover:text-foreground transition-colors">
+            Contact
+          </a>
+        </footer>
       </body>
     </html>
   )
