@@ -2,12 +2,11 @@
 
 import type React from "react"
 
-import { useState, useRef } from "react"
-import { motion, useMotionValue, useTransform, AnimatePresence } from "framer-motion"
-import { ArrowRight, Lock, Clock, Brain, X, Check, Shield, Zap, Mail } from "lucide-react"
+import { useState } from "react"
+import { motion, useMotionValue, useTransform } from "framer-motion"
+import { ArrowRight, Lock, Clock, Brain, X, Check, Shield, Zap } from "lucide-react"
 import { PivotCard } from "@/components/ui/pivot-card"
 import { Button } from "@/components/ui/button"
-import { saveUserProfile } from "@/lib/storage"
 import Checkout from "@/components/checkout"
 
 interface HeroHomeProps {
@@ -77,60 +76,15 @@ const howItWorksSteps = [
   },
 ]
 
-const pricingPlans = [
-  {
-    id: "free",
-    name: "Free Trial",
-    price: "$0",
-    period: "3 days",
-    description: "3 days of full access, no card required",
-    features: [
-      "System Audit & Profile",
-      "3-Day Clarity Window",
-      "Full Safety Vault access",
-      "Full Pattern Library access",
-      "Panic Button",
-    ],
-    cta: "Start Free Trial",
-    popular: false,
-  },
-  {
-    id: "pro",
-    name: "Full Access",
-    price: "$37",
-    period: "one-time",
-    description: "Complete 14-day reset program",
-    features: [
-      "Full System Audit & Profile",
-      "14-Day Clarity Clock",
-      "Unlimited Safety Vault",
-      "Complete Pattern Library",
-      "Daily Check-Ins & Reflections",
-      "Boundary Builder Tools",
-      "Needs Explorer",
-      "24/7 Panic Mode Support",
-      "Progress Tracking",
-    ],
-    cta: "Get Full Access",
-    popular: true,
-  },
-  {
-    id: "lifetime",
-    name: "Lifetime",
-    price: "$79",
-    period: "forever",
-    description: "Always have your safe harbor",
-    features: [
-      "Everything in Full Access",
-      "Lifetime access to all tools",
-      "Future updates included",
-      "Extended Pattern Library",
-      "Priority support",
-      "Community access",
-    ],
-    cta: "Get Lifetime Access",
-    popular: false,
-  },
+const protocolFeatures = [
+  "Relationship System Audit + personalised profile",
+  "14-Day Clarity Clock with daily anchors",
+  "Unlimited Safety Vault",
+  "Complete Pattern Library",
+  "Needs Navigator + Boundary Builder",
+  "Guided Reflection sequences",
+  "Somatic Panic Tool — always on",
+  "14-day money-back guarantee",
 ]
 
 const trustIndicators = [
@@ -143,11 +97,7 @@ export function HeroHome({ onStatusSelect, onStartJourney }: HeroHomeProps) {
   const [selectedStatus, setSelectedStatus] = useState<StatusPath | null>(null)
   const [showHowItWorks, setShowHowItWorks] = useState(false)
   const [showPaywall, setShowPaywall] = useState(false)
-  const [selectedPlanId, setSelectedPlanId] = useState<string | null>(null)
-  const [showEmailCapture, setShowEmailCapture] = useState(false)
-  const [email, setEmail] = useState("")
-  const [emailError, setEmailError] = useState("")
-  const emailInputRef = useRef<HTMLInputElement>(null)
+  const [showCheckout, setShowCheckout] = useState(false)
 
   const mouseX = useMotionValue(0)
   const rotateY = useTransform(mouseX, [-200, 200], [-5, 5])
@@ -160,46 +110,7 @@ export function HeroHome({ onStatusSelect, onStartJourney }: HeroHomeProps) {
 
   const handleStatusSelect = (status: StatusPath) => {
     setSelectedStatus(status)
-    saveUserProfile({ statusPath: status })
     onStatusSelect(status)
-  }
-
-  const handleStart = () => {
-    if (selectedStatus) {
-      setShowPaywall(true)
-    }
-  }
-
-  const handleSelectPlan = (planId: string) => {
-    if (planId === "free") {
-      setShowEmailCapture(true)
-    } else {
-      // Paid plans - show checkout
-      setSelectedPlanId(planId === "pro" ? "full-access" : "lifetime")
-    }
-  }
-
-  const handleEmailSubmit = (e: React.FormEvent) => {
-    e.preventDefault()
-    const trimmed = email.trim()
-    if (!trimmed || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(trimmed)) {
-      setEmailError("Please enter a valid email address.")
-      emailInputRef.current?.focus()
-      return
-    }
-    setEmailError("")
-    saveUserProfile({ email: trimmed, accessLevel: 'trial', trialStartDate: new Date().toISOString() })
-
-    // Fire-and-forget: send email to GoHighLevel
-    fetch("/api/ghl-capture", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ email: trimmed, source: "pivot-audit", timestamp: new Date().toISOString() }),
-    }).catch(() => {/* non-blocking */})
-
-    setShowEmailCapture(false)
-    setShowPaywall(false)
-    onStartJourney()
   }
 
   return (
@@ -248,7 +159,7 @@ export function HeroHome({ onStatusSelect, onStartJourney }: HeroHomeProps) {
           <p className="text-xl md:text-2xl text-muted-foreground font-serif italic mb-6">When Love Needs Logic</p>
           
           <p className="text-xl md:text-2xl text-foreground/80 max-w-2xl mx-auto leading-relaxed mb-8 font-light">
-            The science-backed clarity system for relationship crisis. Get grounded in 14 days.
+            A 14-day clarity protocol for relationship crisis. Not therapy. Not another subscription. An answer.
           </p>
 
           {/* Trust Indicators */}
@@ -293,9 +204,9 @@ export function HeroHome({ onStatusSelect, onStartJourney }: HeroHomeProps) {
               <div className="w-12 h-12 rounded-full bg-pivot-heart-burgundy/20 flex items-center justify-center mx-auto mb-4">
                 <Clock className="w-6 h-6 text-pivot-heart-burgundy" />
               </div>
-              <h3 className="font-semibold text-foreground mb-2">14-Day Reset</h3>
+              <h3 className="font-semibold text-foreground mb-2">14-Day Clarity Clock</h3>
               <p className="text-sm text-muted-foreground leading-relaxed">
-                Science-backed window to stabilize your nervous system.
+                Science-backed window to reach a real decision — not just survive the moment.
               </p>
             </PivotCard>
 
@@ -311,19 +222,38 @@ export function HeroHome({ onStatusSelect, onStartJourney }: HeroHomeProps) {
           </div>
         </motion.div>
 
-        {/* Status Selection */}
+        {/* Status Selection — Step 1 (required) */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.4 }}
           className="mb-10"
         >
-          <h2 className="text-center text-2xl font-serif font-bold text-foreground mb-3">
-            Start your clarity journey
-          </h2>
-          <p className="text-center text-muted-foreground mb-6">
-            Select the situation that matches where you are right now
+          <div className="flex items-center justify-center gap-3 mb-3">
+            <div className="w-8 h-8 rounded-full bg-pivot-clarity-cyan flex items-center justify-center flex-shrink-0">
+              <span className="text-background font-bold text-sm">1</span>
+            </div>
+            <h2 className="text-center text-2xl font-serif font-bold text-foreground">
+              Where are you right now?
+            </h2>
+          </div>
+          <p className="text-center text-foreground/70 mb-2 font-medium">
+            Choose your situation — this shapes your entire experience
           </p>
+          {!selectedStatus && (
+            <motion.p
+              animate={{ opacity: [0.6, 1, 0.6] }}
+              transition={{ repeat: Infinity, duration: 2 }}
+              className="text-center text-pivot-clarity-cyan text-sm font-medium mb-6"
+            >
+              ↓ Tap a card below to get started
+            </motion.p>
+          )}
+          {selectedStatus && (
+            <p className="text-center text-pivot-clarity-cyan text-sm font-medium mb-6">
+              ✓ Got it — now scroll down to continue
+            </p>
+          )}
 
           <div className="space-y-3 max-w-2xl mx-auto">
             {statusPaths.map((status, index) => (
@@ -339,7 +269,9 @@ export function HeroHome({ onStatusSelect, onStartJourney }: HeroHomeProps) {
                   className={`p-6 cursor-pointer transition-all ${
                     selectedStatus === status.id
                       ? "border-pivot-clarity-cyan shadow-[0_0_30px_rgba(0,245,255,0.3)]"
-                      : "hover:border-muted-foreground/40"
+                      : !selectedStatus
+                        ? "hover:border-pivot-clarity-cyan/60 border-muted-foreground/20 shadow-[0_0_0px_rgba(0,245,255,0)] hover:shadow-[0_0_15px_rgba(0,245,255,0.15)]"
+                        : "hover:border-muted-foreground/40 opacity-60"
                   }`}
                   onClick={() => handleStatusSelect(status.id)}
                 >
@@ -349,7 +281,7 @@ export function HeroHome({ onStatusSelect, onStartJourney }: HeroHomeProps) {
                       <p className="text-foreground/90 mb-2">{status.subtitle}</p>
                       <p className="text-muted-foreground text-sm italic">"{status.logic}"</p>
                     </div>
-                    {selectedStatus === status.id && (
+                    {selectedStatus === status.id ? (
                       <motion.div
                         initial={{ scale: 0 }}
                         animate={{ scale: 1 }}
@@ -357,6 +289,10 @@ export function HeroHome({ onStatusSelect, onStartJourney }: HeroHomeProps) {
                       >
                         <Check className="w-4 h-4 text-background" />
                       </motion.div>
+                    ) : (
+                      <div className="w-7 h-7 rounded-full border-2 border-muted-foreground/30 flex items-center justify-center flex-shrink-0">
+                        <ArrowRight className="w-3.5 h-3.5 text-muted-foreground/50" />
+                      </div>
                     )}
                   </div>
                 </PivotCard>
@@ -365,35 +301,65 @@ export function HeroHome({ onStatusSelect, onStartJourney }: HeroHomeProps) {
           </div>
         </motion.div>
 
-        {/* CTA Section */}
+        {/* CTA Section — Step 2 (unlocks after selection) */}
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 0.8 }}
           className="space-y-4 max-w-md mx-auto w-full"
         >
-          {!selectedStatus && (
-            <p className="text-center text-muted-foreground text-sm">
-              ↑ Select your situation above to continue
-            </p>
-          )}
-          <Button
-            onClick={handleStart}
-            disabled={!selectedStatus}
-            size="lg"
-            className="w-full rounded-full py-7 text-lg bg-pivot-clarity-cyan hover:bg-pivot-clarity-cyan/90 text-background font-semibold cta-button disabled:opacity-50 disabled:cursor-not-allowed shadow-[0_0_40px_rgba(0,245,255,0.3)]"
-          >
-            Continue to Pricing
-            <ArrowRight className="w-5 h-5 ml-2" />
-          </Button>
+          {!selectedStatus ? (
+            <div className="rounded-2xl border-2 border-dashed border-muted-foreground/20 p-6 text-center">
+              <p className="text-muted-foreground text-sm font-medium">
+                Select your situation above to unlock the next step
+              </p>
+            </div>
+          ) : (
+            <>
+              <div className="flex items-center gap-3 mb-2">
+                <div className="w-8 h-8 rounded-full bg-pivot-clarity-cyan flex items-center justify-center flex-shrink-0">
+                  <span className="text-background font-bold text-sm">2</span>
+                </div>
+                <p className="text-foreground/80 font-medium text-sm">Take the free 5-minute audit</p>
+              </div>
+              <Button
+                onClick={() => onStartJourney()}
+                size="lg"
+                className="w-full rounded-full py-7 text-lg bg-pivot-clarity-cyan hover:bg-pivot-clarity-cyan/90 text-background font-semibold cta-button shadow-[0_0_40px_rgba(0,245,255,0.3)]"
+              >
+                Start Your Free Relationship Audit
+                <ArrowRight className="w-5 h-5 ml-2" />
+              </Button>
 
-          <Button
-            variant="ghost"
-            className="w-full rounded-full py-6 text-muted-foreground hover:text-foreground"
-            onClick={() => setShowHowItWorks(true)}
-          >
-            How does this work?
-          </Button>
+              <p className="text-center text-muted-foreground/70 text-xs">
+                5 minutes. Free. No card required. See your Relationship Profile instantly.
+              </p>
+
+              <div className="flex items-center gap-3 pt-1">
+                <div className="flex-1 h-px bg-border/40" />
+                <span className="text-xs text-muted-foreground/50">or</span>
+                <div className="flex-1 h-px bg-border/40" />
+              </div>
+
+              <Button
+                variant="ghost"
+                className="w-full rounded-full py-5 text-muted-foreground hover:text-foreground text-sm"
+                onClick={() => setShowPaywall(true)}
+              >
+                See pricing first →
+              </Button>
+            </>
+          )}
+
+          {!selectedStatus && (
+            <Button
+              variant="ghost"
+              className="w-full rounded-full py-5 text-muted-foreground hover:text-foreground text-sm"
+              onClick={() => setShowHowItWorks(true)}
+            >
+              How does this work?
+            </Button>
+          )}
         </motion.div>
 
         {/* Footer */}
@@ -408,11 +374,10 @@ export function HeroHome({ onStatusSelect, onStartJourney }: HeroHomeProps) {
       </motion.div>
 
       {/* Paywall Modal */}
-      {showPaywall && (
+      {showPaywall && !showCheckout && (
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
-          exit={{ opacity: 0 }}
           className="fixed inset-0 bg-background/98 backdrop-blur-md z-50 overflow-y-auto"
         >
           <motion.div
@@ -421,197 +386,85 @@ export function HeroHome({ onStatusSelect, onStartJourney }: HeroHomeProps) {
             animate={{ opacity: 1, scale: 1 }}
             transition={{ duration: 0.3, ease: "easeOut" }}
           >
-            <div className="max-w-5xl mx-auto">
-              <div className="flex items-center justify-between mb-8">
+            <div className="max-w-lg mx-auto">
+              <div className="flex items-center justify-between mb-6">
                 <div>
-                  <h2 className="font-serif text-3xl md:text-4xl font-bold text-foreground mb-2">
-                    Choose your path to clarity
+                  <h2 className="font-serif text-3xl font-bold text-foreground mb-1">
+                    Unlock Your 14-Day Clarity Protocol
                   </h2>
-                  <p className="text-muted-foreground">Start free, upgrade anytime</p>
+                  <p className="text-muted-foreground text-sm">One-time. No subscription. No renewal.</p>
                 </div>
                 <button
                   onClick={() => setShowPaywall(false)}
-                  className="w-10 h-10 rounded-full bg-secondary/50 flex items-center justify-center text-muted-foreground hover:text-foreground hover:bg-secondary"
+                  className="w-10 h-10 rounded-full bg-secondary/50 flex items-center justify-center text-muted-foreground hover:text-foreground hover:bg-secondary flex-shrink-0"
                 >
                   <X className="w-5 h-5" />
                 </button>
               </div>
 
-              {/* Pricing Cards */}
-              <div className="grid md:grid-cols-3 gap-6 mb-12">
-                {pricingPlans.map((plan, index) => (
-                  <motion.div
-                    key={plan.id}
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: index * 0.1 }}
-                    className="relative"
-                  >
-                    {plan.popular && (
-                      <div className="absolute -top-4 left-1/2 -translate-x-1/2 z-10">
-                        <span className="inline-flex items-center gap-1.5 px-4 py-1.5 rounded-full bg-pivot-clarity-cyan text-background text-xs font-semibold shadow-[0_0_20px_rgba(0,245,255,0.4)]">
-                          <Zap className="w-3.5 h-3.5" />
-                          Most Popular
-                        </span>
-                      </div>
-                    )}
-                    <PivotCard
-                      className={`p-8 h-full ${
-                        plan.popular
-                          ? "border-pivot-clarity-cyan shadow-[0_0_40px_rgba(0,245,255,0.2)]"
-                          : ""
-                      }`}
-                      glow={plan.popular}
-                    >
-                      <div className="text-center mb-6">
-                        <h3 className="text-xl font-bold text-foreground mb-2">{plan.name}</h3>
-                        <div className="mb-2">
-                          <span className="text-4xl font-bold text-foreground">{plan.price}</span>
-                          <span className="text-muted-foreground text-sm ml-2">/ {plan.period}</span>
-                        </div>
-                        <p className="text-sm text-muted-foreground">{plan.description}</p>
-                      </div>
-
-                      <div className="space-y-3 mb-8">
-                        {plan.features.map((feature, i) => (
-                          <div key={i} className="flex items-start gap-3">
-                            <Check className="w-5 h-5 text-pivot-clarity-cyan flex-shrink-0 mt-0.5" />
-                            <span className="text-sm text-foreground/90">{feature}</span>
-                          </div>
-                        ))}
-                      </div>
-
-                      <Button
-                        onClick={() => handleSelectPlan(plan.id)}
-                        className={`w-full rounded-full py-6 font-semibold ${
-                          plan.popular
-                            ? "bg-pivot-clarity-cyan hover:bg-pivot-clarity-cyan/90 text-background shadow-[0_0_30px_rgba(0,245,255,0.3)]"
-                            : "bg-pivot-logic-blue hover:bg-pivot-logic-blue/90 text-white"
-                        }`}
-                      >
-                        {plan.cta}
-                      </Button>
-                    </PivotCard>
-                  </motion.div>
-                ))}
+              {/* Price anchor */}
+              <div className="mb-6 p-4 rounded-xl bg-pivot-slate-900/60 border border-pivot-slate-800 text-center">
+                <p className="text-sm text-foreground/70 leading-relaxed">
+                  Therapy charges <span className="text-pivot-clarity-cyan font-semibold">$250+/hour</span> to ask "how does that make you feel?" for 6 months.
+                  The Pivot gives you a framework, a decision, and 14 days of structured clarity. One time.
+                </p>
               </div>
 
-              {/* Trust Section */}
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.4 }}
-                className="text-center"
-              >
-                <div className="flex items-center justify-center gap-8 mb-6 flex-wrap">
-                  <div className="flex items-center gap-2 text-muted-foreground">
-                    <Shield className="w-5 h-5 text-pivot-clarity-cyan" />
-                    <span className="text-sm">Secure & Private</span>
+              <PivotCard className="p-6 border-pivot-clarity-cyan shadow-[0_0_40px_rgba(0,245,255,0.15)]" glow>
+                <div className="text-center mb-5">
+                  <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-pivot-clarity-cyan/20 border border-pivot-clarity-cyan/40 mb-4">
+                    <Zap className="w-3.5 h-3.5 text-pivot-clarity-cyan" />
+                    <span className="text-pivot-clarity-cyan text-xs font-semibold">14-Day Clarity Protocol</span>
                   </div>
-                  <div className="flex items-center gap-2 text-muted-foreground">
-                    <Brain className="w-5 h-5 text-pivot-clarity-cyan" />
-                    <span className="text-sm">Science-Backed</span>
+                  <div className="mb-1">
+                    <span className="text-5xl font-bold text-foreground">$79</span>
+                    <span className="text-muted-foreground text-sm ml-2">one-time</span>
                   </div>
-                  <div className="flex items-center gap-2 text-muted-foreground">
-                    <Clock className="w-5 h-5 text-pivot-clarity-cyan" />
-                    <span className="text-sm">14-Day Reset</span>
+                  <p className="text-xs text-muted-foreground">Less than one therapy session. 14-day money-back guarantee.</p>
+                </div>
+
+                <div className="space-y-2.5 mb-6">
+                  {protocolFeatures.map((feature) => (
+                    <div key={feature} className="flex items-start gap-2.5">
+                      <Check className="w-4 h-4 text-pivot-clarity-cyan flex-shrink-0 mt-0.5" />
+                      <span className="text-sm text-foreground/90">{feature}</span>
+                    </div>
+                  ))}
+                </div>
+
+                <Button
+                  onClick={() => setShowCheckout(true)}
+                  className="w-full rounded-full py-6 bg-pivot-clarity-cyan hover:bg-pivot-clarity-cyan/90 text-background font-semibold text-base shadow-[0_0_30px_rgba(0,245,255,0.3)] cta-button"
+                >
+                  Unlock The Protocol
+                  <ArrowRight className="w-5 h-5 ml-2" />
+                </Button>
+
+                <div className="flex items-center justify-center gap-4 mt-4">
+                  <div className="flex items-center gap-1.5 text-muted-foreground">
+                    <Shield className="w-3.5 h-3.5" />
+                    <span className="text-xs">Secure checkout</span>
+                  </div>
+                  <div className="flex items-center gap-1.5 text-muted-foreground">
+                    <Lock className="w-3.5 h-3.5" />
+                    <span className="text-xs">Private & encrypted</span>
+                  </div>
+                  <div className="flex items-center gap-1.5 text-muted-foreground">
+                    <Brain className="w-3.5 h-3.5" />
+                    <span className="text-xs">Science-backed</span>
                   </div>
                 </div>
-                <p className="text-xs text-muted-foreground max-w-2xl mx-auto leading-relaxed">
-                  All plans include access to our science-backed tools. Your data is private and secure. 
-                  Cancel anytime, no questions asked.
-                </p>
-              </motion.div>
+              </PivotCard>
             </div>
           </motion.div>
         </motion.div>
       )}
 
-      {/* Email Capture Modal */}
-      <AnimatePresence>
-        {showEmailCapture && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            className="fixed inset-0 bg-background/95 backdrop-blur-md z-[60] flex items-center justify-center px-6"
-          >
-            <motion.div
-              initial={{ opacity: 0, scale: 0.95, y: 12 }}
-              animate={{ opacity: 1, scale: 1, y: 0 }}
-              exit={{ opacity: 0, scale: 0.95, y: 12 }}
-              transition={{ duration: 0.25, ease: "easeOut" }}
-              className="w-full max-w-md"
-            >
-              <PivotCard className="p-8 border-pivot-clarity-cyan/30">
-                <div className="flex items-center justify-between mb-6">
-                  <div className="w-12 h-12 rounded-full bg-pivot-clarity-cyan/20 flex items-center justify-center">
-                    <Mail className="w-6 h-6 text-pivot-clarity-cyan" />
-                  </div>
-                  <button
-                    onClick={() => {
-                      setShowEmailCapture(false)
-                      setEmailError("")
-                    }}
-                    className="w-10 h-10 rounded-full bg-secondary/50 flex items-center justify-center text-muted-foreground hover:text-foreground hover:bg-secondary"
-                  >
-                    <X className="w-5 h-5" />
-                  </button>
-                </div>
-
-                <h3 className="font-serif text-2xl font-bold text-foreground mb-2">
-                  One last thing before we start
-                </h3>
-                <p className="text-muted-foreground text-sm mb-6">
-                  Enter your email so we can save your progress. Your 3-day free trial starts immediately.
-                </p>
-
-                <form onSubmit={handleEmailSubmit} className="space-y-4">
-                  <div>
-                    <input
-                      ref={emailInputRef}
-                      type="email"
-                      placeholder="your@email.com"
-                      value={email}
-                      onChange={(e) => {
-                        setEmail(e.target.value)
-                        if (emailError) setEmailError("")
-                      }}
-                      autoFocus
-                      className="w-full px-4 py-3 rounded-xl bg-secondary/50 border border-border text-foreground placeholder:text-muted-foreground/50 focus:outline-none focus:ring-2 focus:ring-pivot-clarity-cyan/50 focus:border-pivot-clarity-cyan transition-all"
-                    />
-                    {emailError && (
-                      <p className="text-red-400 text-xs mt-2">{emailError}</p>
-                    )}
-                  </div>
-
-                  <Button
-                    type="submit"
-                    className="w-full rounded-full py-6 text-lg bg-pivot-clarity-cyan hover:bg-pivot-clarity-cyan/90 text-background font-semibold shadow-[0_0_30px_rgba(0,245,255,0.3)]"
-                  >
-                    Start My Free Trial
-                    <ArrowRight className="w-5 h-5 ml-2" />
-                  </Button>
-                </form>
-
-                <div className="flex items-center gap-2 mt-4 justify-center">
-                  <Shield className="w-3.5 h-3.5 text-muted-foreground/60" />
-                  <p className="text-xs text-muted-foreground/60">
-                    We'll never share your email. No spam, ever.
-                  </p>
-                </div>
-              </PivotCard>
-            </motion.div>
-          </motion.div>
-        )}
-      </AnimatePresence>
-
       {/* Checkout Modal */}
-      {selectedPlanId && (
+      {showPaywall && showCheckout && (
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
-          exit={{ opacity: 0 }}
           className="fixed inset-0 bg-background/98 backdrop-blur-md z-50 overflow-y-auto"
         >
           <motion.div
@@ -621,22 +474,19 @@ export function HeroHome({ onStatusSelect, onStartJourney }: HeroHomeProps) {
             transition={{ duration: 0.3, ease: "easeOut" }}
           >
             <div className="max-w-3xl mx-auto">
-              <div className="flex items-center justify-between mb-8">
-                <div>
-                  <h2 className="font-serif text-3xl font-bold text-foreground mb-2">
-                    Complete Your Purchase
-                  </h2>
-                  <p className="text-muted-foreground">Secure checkout powered by Stripe</p>
-                </div>
+              <div className="flex items-center gap-4 mb-8">
                 <button
-                  onClick={() => setSelectedPlanId(null)}
-                  className="w-10 h-10 rounded-full bg-secondary/50 flex items-center justify-center text-muted-foreground hover:text-foreground hover:bg-secondary"
+                  onClick={() => setShowCheckout(false)}
+                  className="text-sm text-muted-foreground hover:text-foreground transition-colors"
                 >
-                  <X className="w-5 h-5" />
+                  ← Back
                 </button>
+                <div>
+                  <h2 className="font-serif text-2xl font-bold text-foreground">Secure Checkout</h2>
+                  <p className="text-muted-foreground text-sm">Powered by Stripe</p>
+                </div>
               </div>
-
-              <Checkout productId={selectedPlanId} />
+              <Checkout productId="full-access" />
             </div>
           </motion.div>
         </motion.div>
@@ -667,7 +517,7 @@ export function HeroHome({ onStatusSelect, onStartJourney }: HeroHomeProps) {
                 </button>
               </div>
 
-              <p className="text-muted-foreground text-sm mb-8">In 5 steps, here's what this app will do with you.</p>
+              <p className="text-muted-foreground text-sm mb-8">In 5 steps, here's how the 14-Day Clarity Protocol works.</p>
 
               <div className="space-y-4">
                 {howItWorksSteps.map((item, index) => (
