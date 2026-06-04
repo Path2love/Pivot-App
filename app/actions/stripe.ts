@@ -31,6 +31,7 @@ export async function startCheckoutSession(productId: string, origin: string) {
       },
     ],
     mode: 'payment',
+    allow_promotion_codes: true,
     metadata: { productId: product.id },
   })
 
