@@ -117,6 +117,17 @@ export default function StandaloneAuditPage() {
     // Save email to profile
     saveUserProfile({ email: trimmed })
 
+    // Forward to GHL
+    try {
+      await fetch('/api/ghl-capture', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email: trimmed, source: 'pivot-audit-result', timestamp: new Date().toISOString() }),
+      })
+    } catch {
+      // Don't block user if GHL is down
+    }
+
     // Small delay for feel
     await new Promise((r) => setTimeout(r, 400))
     setIsSubmitting(false)
@@ -505,7 +516,7 @@ export default function StandaloneAuditPage() {
                 href="/"
                 className="inline-block w-full py-4 rounded-full bg-[#00f5ff] text-black font-semibold text-lg hover:bg-[#00f5ff]/90 transition-colors text-center"
               >
-                Get Full Access for $37
+                Get Full Access for $79
               </a>
               <p className="text-white/30 text-xs mt-3">One-time payment. No subscription.</p>
             </div>
