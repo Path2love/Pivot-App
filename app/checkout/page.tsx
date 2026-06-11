@@ -1,15 +1,44 @@
 'use client'
 
-import { Suspense } from 'react'
+import { Suspense, useState } from 'react'
 import { useSearchParams, useRouter } from 'next/navigation'
 import { X } from 'lucide-react'
 import Checkout from '@/components/checkout'
 import { PRODUCTS } from '@/lib/products'
+import { saveUserProfile } from '@/lib/storage'
 
 function CheckoutContent() {
   const searchParams = useSearchParams()
   const router = useRouter()
   const productId = searchParams.get('product')
+  const [showPromo, setShowPromo] = useState(false)
+  const [promoCode, setPromoCode] = useState('')
+  const [promoLoading, setPromoLoading] = useState(false)
+  const [promoError, setPromoError] = useState('')
+
+  const handlePromoApply = async () => {
+    if (!promoCode.trim()) return
+    setPromoLoading(true)
+    setPromoError('')
+    try {
+      const response = await fetch('/api/redeem-code', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ code: promoCode.trim() }),
+      })
+      const data = await response.json()
+      if (data.valid) {
+        saveUserProfile({ accessLevel: 'full-access' })
+        router.replace('/')
+      } else {
+        setPromoError('Invalid code. Please try again.')
+      }
+    } catch {
+      setPromoError('Something went wrong. Please try again.')
+    } finally {
+      setPromoLoading(false)
+    }
+  }
 
   const product = productId ? PRODUCTS.find((p) => p.id === productId && p.priceInCents > 0) : null
 
@@ -51,6 +80,38 @@ function CheckoutContent() {
         </div>
 
         <Checkout productId={product.id} />
+
+        <div className="mt-6 text-center">
+          {!showPromo ? (
+            <button
+              onClick={() => setShowPromo(true)}
+              className="text-xs text-muted-foreground hover:text-foreground underline"
+            >
+              Have a promo code?
+            </button>
+          ) : (
+            <div className="flex flex-col items-center gap-2">
+              <div className="flex gap-2 w-full max-w-xs">
+                <input
+                  type="text"
+                  value={promoCode}
+                  onChange={e => setPromoCode(e.target.value.toUpperCase())}
+                  onKeyDown={e => e.key === 'Enter' && handlePromoApply()}
+                  placeholder="ENTER CODE"
+                  className="flex-1 px-3 py-2 rounded-lg bg-secondary border border-border text-foreground text-sm placeholder-muted-foreground focus:outline-none focus:border-[#00f5ff]"
+                />
+                <button
+                  onClick={handlePromoApply}
+                  disabled={promoLoading}
+                  className="px-4 py-2 rounded-lg bg-[#00f5ff] text-black text-sm font-semibold hover:opacity-90 disabled:opacity-60"
+                >
+                  {promoLoading ? '...' : 'Apply'}
+                </button>
+              </div>
+              {promoError && <p className="text-red-400 text-xs">{promoError}</p>}
+            </div>
+          )}
+        </div>
       </div>
     </div>
   )
