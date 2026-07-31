@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { stripe } from '@/lib/stripe'
+import { PRODUCTS } from '@/lib/products'
 import Stripe from 'stripe'
 
 export async function POST(req: NextRequest) {
@@ -29,8 +30,16 @@ export async function POST(req: NextRequest) {
   switch (event.type) {
     case 'checkout.session.completed': {
       const session = event.data.object as Stripe.Checkout.Session
+      const productId = session.metadata?.productId
+      const isPivotProduct = PRODUCTS.some((p) => p.id === productId)
+
+      if (!isPivotProduct) {
+        // This Stripe account is shared with other apps (love-mastery-iq, alison-ai).
+        // Ignore checkout sessions that don't belong to a Pivot-App product.
+        break
+      }
+
       if (session.payment_status === 'paid') {
-        const productId = session.metadata?.productId
         const email = session.customer_details?.email
         console.log(`[stripe-webhook] Payment confirmed for session ${session.id} product=${productId} email=${email}`)
 
